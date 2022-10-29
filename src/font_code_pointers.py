@@ -2,9 +2,19 @@ from selenium.webdriver.common.by import By
 
 
 class MainPagePointers(object):
+    """
+    Defines all the variables that link to elements on the main page.
+    """
+    
     MERCADOS_PRECIOS = (By.XPATH, "/html/body/header/div[2]/div/div/div[2]/nav/ul/li[3]/a")
     
+
+class MercadosPreciosPointers(object):
+    """
+    Defines all the variables that enable actions in the *Mercados y precios* page.
+    """
     
+    SELECT_YEAR = (By.XPATH, '//*[@id="sel7U9_chzn"]')
     
     
     
