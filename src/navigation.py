@@ -19,14 +19,7 @@ class Navigation(BasePage):
         while True:
             try:
                 self.driver.get(f"{self.base_url}")
-                print(f"{self.base_url}")
-                
-                user_agent = self.driver.execute_script("return navigator.userAgent")
-                print(f"User Agent: {user_agent}")
-                
-                header = self.driver.execute_script("return navigator.header")
-                print(f"Header: {header}")
-                
+                print(f"{self.base_url}")                
                 break
             except TimeoutException as timeout:
                 print(f"{timeout}")
@@ -37,9 +30,8 @@ class Navigation(BasePage):
     
     def navigate_to_mercados_precios(self):
         link = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(MainPagePointers.MERCADOS_PRECIOS))
-        print(link)
-        # self.driver.execute_script("arguments[0].click();", link)
-        
+        self.driver.execute_script("arguments[0].click();", link)
+        self.driver.implicitly_wait(10)
         
         
         
