@@ -162,3 +162,5 @@ models/
 *.pth
 *.pdf
 *.txt
+
+.ipynb_checkpoints
