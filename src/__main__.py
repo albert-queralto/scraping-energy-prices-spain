@@ -1,12 +1,17 @@
 import unittest
+import random
+
+# Webscraping libraries
 import requests
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
+# Custom libraries
 from navigation import *
 from data_scraper import *
+from webdriver_utils import *
 
 """
 https://tarifaluzhora.es/
@@ -14,36 +19,37 @@ https://www.esios.ree.es/es
 https://www.ree.es/es/datos/aldia
 """
 
-class BookScraping(unittest.TestCase):
-    
+class ElectricityScraper(unittest.TestCase):
+    # We will use the unittest library to check if there are any errors during the execution of the Crawler, allowing for better debugging.
     def setUp(self):
-        opts = Options()
-        opts.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                            +"AppleWebKit/537.36 (KHTML, like Gecko)"
-                            +"Chrome/87.0.4280.141 Safari/537.36")
-        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=opts)
+        """
+        Method that includes all the elements that the test each test requires for execution.
+        Similar to the __init__ method.
+        """
+        options = Options() # Define custom options for the WebDriver
+        options.headless = False # Option to show the browser window (True) or not (False)
+        options.add_argument(f'user-agent={random.choice(WebDriverOptions.user_agents)}') # Setup a custom User-Agent to prevent detection
+        options.add_argument("content-type=application/x-www-form-urlencoded") # Setup content-type
+        
+        # Initiate the webdriver, installs it if not present and implements the previous options
+        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=options)
         self.driver.set_page_load_timeout(10)
-        self.base_url = 'https://www.esios.ree.es/es'
+        self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
     def test_scraper(self):
+        """
+        Function that 
+        """
         page_navigator = Navigation(driver=self.driver, base_url=self.base_url)
         page_navigator.open_chrome_session()
-        # page_navigator.navigate_to_mercados_precios()
+        page_navigator.navigate_to_mercados_precios()
+        self.driver.implicitly_wait(30)
         
     def tearDown(self):
-        self.driver.close()
+        """
+        Method that includes all the instructions used after the unittest is performed.
+        """
+        self.driver.close() # We close the driver
         
 if __name__ == '__main__':
-    
-    HEADERS = {
-        'upgrade-insecure-requests': "1",
-        'content-type': "application/x-www-form-urlencoded",
-        'user-agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36",
-        'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        'accept-encoding': "gzip, deflate, compress, *",
-        'accept-language': "en-US, en;q=0.9, es;q=0.8, de;q=0.7, *;q=0.5",
-        'cache-control': "no-cache"
-    }
-    
-    
     unittest.main(warnings='ignore')
