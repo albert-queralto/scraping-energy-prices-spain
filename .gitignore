@@ -156,9 +156,10 @@ input/
 models/
 
 # data files
-*.csv
 *.h5
 *.pkl
 *.pth
 *.pdf
 *.txt
+
+.ipynb_checkpoints
