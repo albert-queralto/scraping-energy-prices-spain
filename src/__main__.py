@@ -29,16 +29,6 @@ class BookScraping(unittest.TestCase):
         page_navigator = Navigation(driver=self.driver, base_url=self.base_url)
         page_navigator.open_chrome_session()
         # page_navigator.navigate_to_mercados_precios()
-    #     page_navigator.click_x_button()
-    #     page_navigator.navigate_best_books_ever()
-        
-    #     best_books_ever_page = BestBooksEverPageScraper(driver=self.driver, base_url=self.base_url)
-    #     best_books_ever_page.get_all_book_pages()
-        
-    #     best_books = best_books_ever_page.get_all_book_details()
-        
-    #     data_saver = SaveUtils(filename='best_books.csv', dictionary=best_books)
-    #     data_saver.save_data()
         
     def tearDown(self):
         self.driver.close()
