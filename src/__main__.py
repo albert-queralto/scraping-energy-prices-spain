@@ -1,5 +1,6 @@
 import unittest
 import random
+import time
 
 # Webscraping libraries
 import requests
@@ -33,17 +34,31 @@ class ElectricityScraper(unittest.TestCase):
         
         # Initiate the webdriver, installs it if not present and implements the previous options
         self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=options)
-        self.driver.set_page_load_timeout(10)
+        self.driver.set_page_load_timeout(30)
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
+        
+        # Set days before the actual day to scrape
+        self.num_previous_days = 40
         
     def test_scraper(self):
         """
-        Function that 
+        Function that implements the scraper.
         """
         page_navigator = Navigation(driver=self.driver, base_url=self.base_url)
         page_navigator.open_chrome_session()
-        page_navigator.navigate_to_mercados_precios()
-        self.driver.implicitly_wait(30)
+        time.sleep(5)
+        page_navigator.navigate_mercados_precios()
+        time.sleep(5)
+        
+        # Navigates through the dates
+        for year, month, day in [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+
+            # Dictionary that maps month numbers to strings
+            month_mapper = {1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'}
+            month = month_mapper[month] # Transform month to string using month_mapper dictionary
+            
+            page_navigator.date_picker(year, month, day)
+            time.sleep(5)
         
     def tearDown(self):
         """
