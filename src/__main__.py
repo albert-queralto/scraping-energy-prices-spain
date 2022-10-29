@@ -50,15 +50,15 @@ class ElectricityScraper(unittest.TestCase):
         page_navigator.navigate_mercados_precios()
         time.sleep(5)
         
-        # Navigates through the dates
-        for year, month, day in [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        # # Navigates through the dates
+        # for year, month, day in [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
 
-            # Dictionary that maps month numbers to strings
-            month_mapper = {1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'}
-            month = month_mapper[month] # Transform month to string using month_mapper dictionary
+        #     # Dictionary that maps month numbers to strings
+        #     month_mapper = {1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'}
+        #     month = month_mapper[month] # Transform month to string using month_mapper dictionary
             
-            page_navigator.date_picker(year, month, day)
-            time.sleep(5)
+        #     page_navigator.date_picker(year, month, day)
+        #     time.sleep(5)
         
     def tearDown(self):
         """
