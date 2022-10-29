@@ -7,6 +7,14 @@ from font_code_pointers import *
 from navigation import *
 from support_functions import *
 
+
+
+
+
+
+
+
+
 # class BestBooksEverPageScraper(BasePage):
     
 #     def __init__(self, driver, base_url):
