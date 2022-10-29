@@ -1,6 +1,7 @@
 import unittest
 import random
 import time
+import datetime
 
 # Webscraping libraries
 import requests
@@ -37,8 +38,10 @@ class ElectricityScraper(unittest.TestCase):
         self.driver.set_page_load_timeout(30)
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
-        # Set days before the actual day to scrape
+        # Set days before the actual day to scrape and create a list of dates and transform them to tuples
         self.num_previous_days = 40
+        self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
         
     def test_scraper(self):
         """
@@ -46,19 +49,15 @@ class ElectricityScraper(unittest.TestCase):
         """
         page_navigator = Navigation(driver=self.driver, base_url=self.base_url)
         page_navigator.open_chrome_session()
-        time.sleep(5)
+        time.sleep(1)
         page_navigator.navigate_mercados_precios()
-        time.sleep(5)
+        time.sleep(1)
         
-        # # Navigates through the dates
-        # for year, month, day in [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
-
-        #     # Dictionary that maps month numbers to strings
-        #     month_mapper = {1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'}
-        #     month = month_mapper[month] # Transform month to string using month_mapper dictionary
-            
-        #     page_navigator.date_picker(year, month, day)
-        #     time.sleep(5)
+        # Navigates through the defined dates
+        for year, month, day in self.date_range:
+            page_navigator.date_navigator(year=year, month=month, day=day)
+            print(self.driver.current_url)
+            time.sleep(5)
         
     def tearDown(self):
         """

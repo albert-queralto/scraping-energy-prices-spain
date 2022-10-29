@@ -1,10 +1,10 @@
 
-
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException
 
 from font_code_pointers import *
+from support_functions import *
 
 
 class BasePage(object):
@@ -44,52 +44,27 @@ class Navigation(BasePage):
         """
         link = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MainPagePointers.MERCADOS_PRECIOS))
         self.driver.execute_script("arguments[0].click();", link)
-        self.driver.implicitly_wait(30)    
         
         
-    def date_picker(self, year, mnnth, day):
+    def date_navigator(self, year, month, day):
         """
-        Navigates to each date from a selected range.
+        Navigates to each date from a selected range that is provided.
+        
+        Paràmeters:
+        ----------
+        year: int.
+                The year to navigate to.
+        month: int.
+                The month to navigate to.
+        day: int.
+                The day to navigate to.
         """
         
-        open_selector = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.SELECT_YEAR))
-        self.driver.execute_script("arguments[0].click();", open_selector)
-        
-        
-        
-        
-        
-        
-    # def click_x_button(self):
-    #     button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(ListopiaPointers.X_BUTTON))
-    #     self.driver.execute_script("arguments[0].click();", button)
-        
-    # def navigate_best_books_ever(self):
-    #     link = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(ListopiaPointers.BEST_BOOKS_EVER))
-    #     self.driver.execute_script("arguments[0].click();", link)
-        
-    # def navigate_next_page(self):
-    #     try:
-    #         next_page = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(BestBooksEverPointers.NEXT_PAGE))
-    #         self.driver.execute_script("arguments[0].click();", next_page)
-    #         return True
-    #     except WebDriverException:
-    #         print('There was an issue going to the next page.')
-    #         try:
-    #             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(BestBooksEverPointers.NEXT_PAGE_DISABLED))
-    #             print('Next page button is disabled. Last page reached.')
-    #             return False
-    #         except NoSuchElementException:
-    #             print("Another exception occurred. Retrying to go to the next page.")
-    #             self.driver.implicitly_wait(5)
-    #             return self.navigate_next_page()
-        
-    # def navigate_book_pages(self, book_id):
-    #     try:
-    #         self.driver.implicitly_wait(5)
-    #         return self.driver.get(f"{self.base_url}/book/show/{book_id}")
-    #     except TimeoutException as timeout:
-    #         print(f"{timeout}")
-    #         print('Page will be reloaded.')
-    #         self.driver.implicitly_wait(5)
-    #         return self.navigate_book_pages(book_id)
+        # Check if ?date=DD-MM-YYYY is present in the URL
+        if '?date=' in self.driver.current_url:
+            # If it is present, remove it
+            page_url = self.driver.get(self.driver.current_url.split('?date=')[0])
+
+        # Add the '?date=DD-MM-YYYY' string to the URL and go to the page
+        page_url = self.driver.current_url + f"?date={day}-{month}-{year}"
+        return self.driver.get(page_url)

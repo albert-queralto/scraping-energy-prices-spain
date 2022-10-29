@@ -1,4 +1,14 @@
+from selenium.webdriver.common.action_chains import ActionChains
 
+class ExtendedActions(ActionChains):
+    """
+    Extends the functionality of the ActionChains method from the Selenium WebDriver.
+    Source: https://stackoverflow.com/questions/53467739/how-to-implement-method-chaining-of-selenium-multiple-webdriverwait-in-python
+    """
+    def wait(self, second, condition):
+        element = WebDriverWait(self._driver, second).until(condition)
+        self.move_to_element(element)
+        return self
 
 # class StringProcessing(object):
     
