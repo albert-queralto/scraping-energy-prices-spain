@@ -14,7 +14,7 @@ class MercadosPreciosPointers(object):
     Defines all the variables that enable actions in the *Mercados y precios* page.
     """
     
-    SELECT_YEAR = (By.XPATH, '//*[@id="sel7U9_chzn"]')
+    
     
     
     
