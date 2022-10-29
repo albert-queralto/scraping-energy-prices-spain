@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 
 
 class MainPagePointers(object):
-    MERCADOS_PRECIOS = (By.LINK_TEXT, "Mercados y precios")
+    MERCADOS_PRECIOS = (By.XPATH, "/html/body/header/div[2]/div/div/div[2]/nav/ul/li[3]/a")
     
     
     
