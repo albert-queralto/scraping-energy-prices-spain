@@ -13,8 +13,14 @@ class MercadosPreciosPointers(object):
     """
     Defines all the variables that enable actions in the *Mercados y precios* page.
     """
-    
-    
+    def __init__(self, value):
+        self.value = value
+        
+    def hour_selectors(self):
+        self.HOUR_SELECTOR_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div')
+        self.HOUR_LIST_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div')
+        self.SELECT_HOUR_LIST = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/select')
+        self.SELECTABLE_HOUR = (By.XPATH, f'/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul/li[{self.value}]')
     
     
     
