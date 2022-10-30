@@ -39,7 +39,7 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 40
+        self.num_previous_days = 1
         self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
         self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
         
@@ -57,6 +57,9 @@ class ElectricityScraper(unittest.TestCase):
         for year, month, day in self.date_range:
             page_navigator.date_navigator(year=year, month=month, day=day)
             print(self.driver.current_url)
+            time.sleep(5)
+            
+            page_navigator.hour_selection()
             time.sleep(5)
         
     def tearDown(self):
