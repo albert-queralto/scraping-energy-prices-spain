@@ -73,7 +73,7 @@ class Navigation(BasePage):
         return self.driver.get(page_url)
     
     
-    def hour_selection(self):
+    def hour_selection(self, list_index):
         """
         Selects the hour from where to obtain the energy prices.
         """
@@ -93,20 +93,20 @@ class Navigation(BasePage):
             # find next ul element
             find_ul = find_chzn_drop.find_element(By.TAG_NAME, "ul")
             
-            for i in range(24):
-                try:
-                    # find_li_element = find_ul.find_element(By.XPATH, f"//*[contains(@id, '_chzn_o_{i}')]")
-                    find_li_element = find_ul.find_element(By.XPATH, f"//*[text()={str(i).zfill(2)}]")
-                    self.driver.execute_script("arguments[0].scrollIntoView();", find_li_element)
-                    print(find_li_element.get_attribute('textContent'))
-                    self.driver.execute_script("arguments[0].click();", find_li_element)
-                    time.sleep(5)
-                except StaleElementReferenceException as stale_exception:
-                    print(stale_exception)
-                    find_li_element = find_ul.find_element(By.XPATH, f"//*[text()={str(i).zfill(2)}]")
-                    self.driver.execute_script("arguments[0].scrollIntoView();", find_li_element)
-                    self.driver.execute_script("arguments[0].click();", find_li_element)
-                    time.sleep(5)
+            # for i in range(24):
+            try:
+                # find_li_element = find_ul.find_element(By.XPATH, f"//*[contains(@id, '_chzn_o_{i}')]")
+                find_li_element = find_ul.find_element(By.XPATH, f"//*[text()={str(list_index).zfill(2)}]")
+                self.driver.execute_script("arguments[0].scrollIntoView();", find_li_element)
+                print(find_li_element.get_attribute('textContent'))
+                self.driver.execute_script("arguments[0].click();", find_li_element)
+                time.sleep(5)
+            except StaleElementReferenceException as stale_exception:
+                print(stale_exception)
+                find_li_element = find_ul.find_element(By.XPATH, f"//*[text()={str(list_index).zfill(2)}]")
+                self.driver.execute_script("arguments[0].scrollIntoView();", find_li_element)
+                self.driver.execute_script("arguments[0].click();", find_li_element)
+                time.sleep(5)
             
             
             # find all li elements

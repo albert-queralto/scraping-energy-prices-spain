@@ -58,9 +58,9 @@ class ElectricityScraper(unittest.TestCase):
             page_navigator.date_navigator(year=year, month=month, day=day)
             print(self.driver.current_url)
             time.sleep(5)
-            
-            page_navigator.hour_selection()
-            time.sleep(5)
+            for i in range(24):
+                page_navigator.hour_selection(list_index=i)
+                time.sleep(5)
         
     def tearDown(self):
         """
