@@ -8,8 +8,14 @@ from navigation import *
 from support_functions import *
 
 
-# class 
+class get_pvpc_data(BasePage):
+    
+    def __init__(self, driver, base_url):
+        super().__init__(driver, base_url)
 
+        self.pvpc_ceuta_melilla = 0
+        
+        self.pvpc_peninsula_baleares_canarias = 0
 
 
 

@@ -12,15 +12,16 @@ class MainPagePointers(object):
 class MercadosPreciosPointers(object):
     """
     Defines all the variables that enable actions in the *Mercados y precios* page.
-    """
-    def __init__(self, value):
-        self.value = value
-        
-    def hour_selectors(self):
-        self.HOUR_SELECTOR_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div')
-        self.HOUR_LIST_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div')
-        self.SELECT_HOUR_LIST = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/select')
-        self.SELECTABLE_HOUR = (By.XPATH, f'/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul/li[{self.value}]')
+    """    
+    HOUR_SELECTOR_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div')
+    HOUR_LIST_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div')
+    SELECT_HOUR_LIST = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/select')
+    FIND_CHZN_DROP = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div')
+    FIND_CHZN_RESULTS = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul')
+    # li element with class active-result
+    # PVPC_CEUTA_MELILLA = (By.XPATH, '//*[@id="serie-8744"]')
+    # PVPC_PENINSULA_BALEARES_CANARIAS = (By.XPATH, '//*[@id="serie-8741"]')
+    
     
     
     
