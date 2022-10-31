@@ -18,7 +18,6 @@ from webdriver_utils import *
 """
 https://tarifaluzhora.es/
 https://www.esios.ree.es/es
-https://www.ree.es/es/datos/aldia
 """
 
 class ElectricityScraper(unittest.TestCase):
@@ -57,14 +56,13 @@ class ElectricityScraper(unittest.TestCase):
         for year, month, day in self.date_range:
             page_navigator.date_navigator(year=year, month=month, day=day)
             time.sleep(5)
-            for i in range(24):
+            for i in range(6,24):
                 page_navigator.hour_selection(list_index=i)                
                 mercado_precio = MercadoPreciosData(driver=self.driver)
                 print(self.driver.current_url)
+                time.sleep(5)
                 mercado_precio.precio_final_energia()
 
-                if i == 1:
-                    break
     def tearDown(self):
         """
         Method that includes all the instructions used after the unittest is performed.
