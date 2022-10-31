@@ -56,12 +56,15 @@ class ElectricityScraper(unittest.TestCase):
         # Navigates through the defined dates
         for year, month, day in self.date_range:
             page_navigator.date_navigator(year=year, month=month, day=day)
-            print(self.driver.current_url)
             time.sleep(5)
             for i in range(24):
-                page_navigator.hour_selection(list_index=i)
-                time.sleep(5)
-        
+                page_navigator.hour_selection(list_index=i)                
+                mercado_precio = MercadoPreciosData(driver=self.driver)
+                print(self.driver.current_url)
+                mercado_precio.precio_final_energia()
+
+                if i == 1:
+                    break
     def tearDown(self):
         """
         Method that includes all the instructions used after the unittest is performed.
