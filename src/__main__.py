@@ -34,7 +34,7 @@ class ElectricityScraper(unittest.TestCase):
         options.add_argument("content-type=application/x-www-form-urlencoded") # Setup content-type
         
         # Initiate the webdriver, installs it if not present and implements the previous options
-        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=options)
+        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         self.driver.set_page_load_timeout(30)
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
