@@ -8,14 +8,16 @@ from navigation import *
 from support_functions import *
 
 
-class get_pvpc_data(BasePage):
+class MercadoPreciosData(object):
     
-    def __init__(self, driver, base_url):
-        super().__init__(driver, base_url)
+    def __init__(self, driver):
+        self.driver = driver        
+        self.precio_medio_total = []
 
-        self.pvpc_ceuta_melilla = 0
-        
-        self.pvpc_peninsula_baleares_canarias = 0
+    def precio_final_energia(self):
+        pm_total = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[1]/td[1]')))
+        print('precio_medio:', pm_total.text)
+        return self.precio_medio_total.append(pm_total)
 
 
 
