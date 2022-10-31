@@ -34,7 +34,7 @@ class ElectricityScraper(unittest.TestCase):
         options.add_argument("content-type=application/x-www-form-urlencoded") # Setup content-type
         
         # Initiate the webdriver, installs it if not present and implements the previous options
-        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=options)
+        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         self.driver.set_page_load_timeout(30)
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
@@ -58,9 +58,9 @@ class ElectricityScraper(unittest.TestCase):
             page_navigator.date_navigator(year=year, month=month, day=day)
             print(self.driver.current_url)
             time.sleep(5)
-            
-            page_navigator.hour_selection()
-            time.sleep(5)
+            for i in range(24):
+                page_navigator.hour_selection(list_index=i)
+                time.sleep(5)
         
     def tearDown(self):
         """
