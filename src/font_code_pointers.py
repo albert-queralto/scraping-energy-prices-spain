@@ -12,15 +12,20 @@ class MainPagePointers(object):
 class MercadosPreciosPointers(object):
     """
     Defines all the variables that enable actions in the *Mercados y precios* page.
-    """    
-    HOUR_SELECTOR_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div')
-    HOUR_LIST_HIDDEN = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div')
-    SELECT_HOUR_LIST = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/select')
-    FIND_CHZN_DROP = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div')
+    """
+    HOUR_SELECTOR_HIDDEN = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[1]/div/div/div[2]/div')
+    HOUR_SELECTOR_HIDDEN_CHILD = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[1]/div/div/div[2]/div/div/div')
+    
+    HOUR_LIST_HIDDEN = (By.XPATH, f"//*[@class='chzn-container chzn-container-single']")
+    # HOUR_LIST_HIDDEN_CHILD = (By.XPATH, f"//*[@class='chzn-container chzn-container-single']/a")
+    HOUR_LIST_HIDDEN_CHILD = (By.XPATH, f"//*[@class='chzn-single']")
+    # HOUR_LIST_HIDDEN_CHILD = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/a/div')
+    
+    
+    
+    SELECT_HOUR_LIST = (By.XPATH, '//select[contains(@class, "select-timepicker hours")]')    
+    FIND_CHZN_DROP = (By.XPATH, f"//*[contains(@class, 'chzn-drop')]")
     FIND_CHZN_RESULTS = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul')
-    # li element with class active-result
-    # PVPC_CEUTA_MELILLA = (By.XPATH, '//*[@id="serie-8744"]')
-    # PVPC_PENINSULA_BALEARES_CANARIAS = (By.XPATH, '//*[@id="serie-8741"]')
     
     
     
