@@ -48,12 +48,12 @@ class GeneracionConsumoPointers(object):
     # Variables to locate different elements of the hour selector
     HOUR_SELECTOR_HIDDEN = (By.XPATH, '//*[@id="gycCo2WidgetView"]/div/div[3]/div')
     HOUR_SELECTOR_HIDDEN_CHILD = (By.XPATH, '//*[@id="gycCo2WidgetView"]/div/div[3]/div/div')
-    HOUR_LIST_HIDDEN = (By.XPATH, f"//*[@class='chzn-container chzn-container-single']")
+    HOUR_LIST_HIDDEN = (By.XPATH, f"/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]")    
     HOUR_LIST_ACTIVE = (By.XPATH, f"//*[@class='chzn-container chzn-container-single chzn-container-active']")
-    HOUR_LIST_ACTIVE_DROP = (By.XPATH, f"//*[@class='chzn-container chzn-container-single chzn-with-drop chzn-container-active']")
+    HOUR_LIST_ACTIVE_DROP = (By.XPATH, "/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]")
     HOUR_LIST_HIDDEN_CHILD = (By.XPATH, f"//*[@class='chzn-single']")
-    SELECT_HOUR_LIST = (By.XPATH, '//select[contains(@class, "select-timepicker hours")]')    
-    SELECTED_HOUR = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[1]/div/div/div[2]/div/div/span')
+    SELECT_HOUR_LIST = (By.XPATH, '//select[contains(@class, "select-timepicker hours chzn-done")]')    
+    SELECTED_HOUR = (By.XPATH, '/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]/a/span')
     
     
     # Variables to locate the data stored in the page
