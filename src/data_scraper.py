@@ -84,6 +84,48 @@ class MercadoPreciosData(object):
         cuota_com_ref = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.CUOTA_COM_REF)).text
 
         return cuota_com_libre, cuota_com_ref
+    
+    
+class GeneracionConsumoData(object):
+    
+    def __init__(self, driver):
+        self.driver = driver        
+        
+    def get_renewable_generation_data(self):
+        """
+        Obtains the energy generation data of renewable sources from the *Generación y Consumo* webpage.
+        
+        Parameters:
+        -----------
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+            
+        Returns:
+        --------
+        percentage_renewable: float.
+            The percentage of generated renewable energy.
+        renewable_power: float.
+            The generated power of renewable energy.
+        wind_power: float.
+            The generated power of wind energy.
+        water_power: float.
+            The generated power of water energy.
+        solar_power: float.
+            The generated power of solar energy.
+        nuclear_power: float.
+            The generated power of nuclear energy.
+        thermo_renewable_power: float:
+            The generated power of renewable thermal energy.
+        """
+        percentage_renewable = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.PERC_RENEW_GEN)).text
+        renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.RENEW_GEN_MW)).text
+        wind_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.WIND_MW)).text
+        water_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.WATER_MW)).text
+        solar_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.SOLAR_MW)).text
+        nuclear_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.NUCLEAR_MW)).text
+        thermo_renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.THERMO_RENEW_MW)).text
+        
+        return percentage_renewable, renewable_power, wind_power, water_power, solar_power, nuclear_power, thermo_renewable_power
 
 
 

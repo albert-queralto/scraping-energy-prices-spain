@@ -1,3 +1,5 @@
+import os
+import csv
 from selenium.webdriver.common.action_chains import ActionChains
 
 class ExtendedActions(ActionChains):
@@ -48,14 +50,30 @@ class ExtendedActions(ActionChains):
 #         find_publication_year = soup.find(BookPagePointers.PUBLICATION_YEAR[0], attrs={BookPagePointers.PUBLICATION_YEAR[1]:BookPagePointers.PUBLICATION_YEAR[2]}).text.strip()
 #         return int(re.search(r'\d{4}', find_publication_year).group(0))
     
+    
 
-class SaveUtils(object):
+class FileUtils(object):
     def __init__(self, filename, dictionary) -> None:
-        self.filename = filename
+        
+        # Check if folder to store data exists otherwise create it
+        if not os.path.exists('data'):
+            os.makedirs('data')
+            
+        self.filename = os.path.join('data', filename)
         self.dictionary = dictionary
         
     def save_data(self):
+        """
+        Saves the data to a CSV file.
+        """
         with open(self.filename, 'w', newline='\n') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.dictionary.keys())
             writer.writerows(zip(*self.dictionary.values()))
+            
+    def check_presence_read_data(self):
+        """
+        Checks if file is present in the folder and reads the data from a CSV file in order to store new columns to it using pandas
+        """
+        if os.path.exists(self.filename):
+            pass
