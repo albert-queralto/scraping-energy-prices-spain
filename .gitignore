@@ -151,9 +151,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# input data and models
-input/
-models/
+# data folder
+data/
 
 # data files
 *.h5
@@ -161,5 +160,6 @@ models/
 *.pth
 *.pdf
 *.txt
+*.csv
 
 .ipynb_checkpoints
