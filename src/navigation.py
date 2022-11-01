@@ -1,5 +1,3 @@
-from argparse import Action
-from os import listxattr
 import time
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -152,7 +150,8 @@ class NavigationMercadosPrecios(BasePage):
 
             # Finds the first drop down list menu and clicks it to open the second drop down menu with the list of hours to select
             select_hour_timepicker = select_hour_tooltip.find_element(MercadosPreciosPointers.HOUR_LIST_HIDDEN[0], MercadosPreciosPointers.HOUR_LIST_HIDDEN[1])
-            if select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single':
+            if (select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single') or \
+                (select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single chzn-container-active'):
                 try:
                     select_hour_tooltip_child.click()
                     select_drop_down = select_hour_timepicker.find_element(MercadosPreciosPointers.HOUR_LIST_ACTIVE_DROP[0], MercadosPreciosPointers.HOUR_LIST_ACTIVE_DROP[1])
@@ -190,10 +189,8 @@ class NavigationMercadosPrecios(BasePage):
             actions.pause(5)
             actions.click(li_elements).perform()
             
-            # Move the window up every now and then so that the dropdown menu can be found. Otherwise, it throws an ElementClickInterceptedException
+            # Scroll the window to the top every now and then so that the dropdown menu can be found. Otherwise, it throws an ElementClickInterceptedException
             if list_index > 9 and list_index % 3 == 0:
-                # actions.send_keys(Keys.ARROW_UP).send_keys(Keys.ENTER).perform()
-                # actions.send_keys(Keys.ARROW_UP).send_keys(Keys.ENTER).perform()
                 self.driver.execute_script("window.scrollTo(0, 0)")
             time.sleep(5)
             
@@ -306,27 +303,28 @@ class NavigationGeneracionConsumo(BasePage):
                     return self.hour_selection_generacion_libre_co2(list_index)
 
             # Finds the first drop down list menu and clicks it to open the second drop down menu with the list of hours to select
-            select_hour_timepicker = select_hour_tooltip.find_element(GeneracionConsumoPointers.HOUR_LIST_HIDDEN[0], GeneracionConsumoPointers.HOUR_LIST_HIDDEN[1])
-            if select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single':
+            select_hour_timepicker = self.driver.find_element(GeneracionConsumoPointers.HOUR_LIST_HIDDEN[0], GeneracionConsumoPointers.HOUR_LIST_HIDDEN[1])
+            if (select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single') or \
+                (select_hour_timepicker.get_attribute("class") == 'chzn-container chzn-container-single chzn-container-active'):
                 try:
-                    select_hour_tooltip_child.click()
-                    select_drop_down = select_hour_timepicker.find_element(GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[0], GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[1])
+                    select_hour_timepicker.click()
+                    select_drop_down = self.driver.find_element(GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[0], GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[1])
                     time.sleep(1)
                 # Handle the exception when the element is not interactable
                 except ElementNotInteractableException as element_not_interactable:
                     print(element_not_interactable)
-                    select_hour_tooltip_child.click()
+                    select_hour_timepicker.click()
                     time.sleep(1)
                 # Handles the exception when the element is not found
                 except NoSuchElementException as no_such_element:
                     print(no_such_element)
-                    select_drop_down = select_hour_timepicker.find_element(GeneracionConsumoPointers.HOUR_LIST_ACTIVE[0], GeneracionConsumoPointers.HOUR_LIST_ACTIVE[1])
+                    select_drop_down = self.driver.find_element(GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[0], GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[1])
                     select_drop_down.click()
                     time.sleep(1)
         
             # Handle the selection of the right hour
             # XPATH for the li locator to be found
-            LI_XPATH = f'/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul/li[{list_index+1}]'
+            LI_XPATH = f'/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]/div/ul/li[{list_index+1}]'
             
             # Finds the right hour to be selected based on the value of 'list_index' + 1
             li_elements = self.driver.find_element(By.XPATH, LI_XPATH)
@@ -345,10 +343,8 @@ class NavigationGeneracionConsumo(BasePage):
             actions.pause(5)
             actions.click(li_elements).perform()
             
-            # Move the window up every now and then so that the dropdown menu can be found. Otherwise, it throws an ElementClickInterceptedException
+            # Scroll the window to the top every now and then so that the dropdown menu can be found. Otherwise, it throws an ElementClickInterceptedException
             if list_index > 9 and list_index % 3 == 0:
-                # actions.send_keys(Keys.ARROW_UP).send_keys(Keys.ENTER).perform()
-                # actions.send_keys(Keys.ARROW_UP).send_keys(Keys.ENTER).perform()
                 self.driver.execute_script("window.scrollTo(0, 0)")
             time.sleep(5)
             
