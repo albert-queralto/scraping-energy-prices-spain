@@ -1,5 +1,15 @@
+# -*- coding: utf-8 -*-
+# Path: src/navigation.py
+# Authors: Esther Manzano, Albert Queraltó
+
+"""
+This is module contains alls the classes and methods that enable navigation of the crawler
+through the different pages, as well as elements of each page.
+"""
+
+
 import time
-from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException, ElementClickInterceptedException
 from selenium.webdriver.common.keys import Keys

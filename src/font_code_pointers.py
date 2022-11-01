@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+# Path: src/font_code_pointers.py
+# Authors: Esther Manzano, Albert Queraltó
+
+"""
+This is module contains classes with variables that point to XPATH
+elements. These elements enable the location of specific attributes
+from the HTML webpage using Selenium (selenium.dev).
+"""
+
 from selenium.webdriver.common.by import By
 
 

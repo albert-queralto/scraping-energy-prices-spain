@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+# Path: src/support_functions.py
+# Authors: Esther Manzano, Albert Queraltó
+
+"""
+This is module contains all classes and methods that act as general utilities.
+It contains class extensions, wrapper functions and file utils.
+"""
+
 import os
 import csv
 import pandas as pd
@@ -6,6 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 # Custom libraries
 from navigation import *
 from data_scraper import *
+
 
 class ExtendedActions(ActionChains):
     """
@@ -81,6 +91,7 @@ class WrapperFunctionsMercadoPrecios(object):
             self.market_price['free market share (%)'].append(cuota_com_libre)
             self.market_price['reference market share (%)'].append(cuota_com_ref)
         return self.market_price
+    
     
 class WrapperFunctionsGeneracionConsumo(object):
     """
@@ -164,10 +175,3 @@ class FileUtils(object):
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.dictionary.keys())
             writer.writerows(zip(*self.dictionary.values()))
-            
-    def check_presence_read_data(self):
-        """
-        Checks if file is present in the folder and reads the data from a CSV file in order to store new columns to it using pandas
-        """
-        if os.path.exists(self.filename):
-            pass
