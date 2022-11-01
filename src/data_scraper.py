@@ -7,11 +7,6 @@ This is module contains alls the classes and methods that allow to obtain specif
 from the pages the crawler has navigated to.
 """
 
-import re
-from sqlite3 import connect
-from bs4 import BeautifulSoup
-from requests_html import HTMLSession
-
 from font_code_pointers import *
 from navigation import *
 from support_functions import *
