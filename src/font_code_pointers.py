@@ -22,6 +22,17 @@ class MercadosPreciosPointers(object):
     HOUR_LIST_HIDDEN_CHILD = (By.XPATH, f"//*[@class='chzn-single']")
     
     SELECT_HOUR_LIST = (By.XPATH, '//select[contains(@class, "select-timepicker hours")]')    
-    FIND_CHZN_DROP = (By.XPATH, f"//*[contains(@class, 'chzn-drop')]")
-    FIND_CHZN_RESULTS = (By.XPATH, "//*[class='chzn-results']")
-    TEST_FULL_PATH = (By.XPATH, "/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul")
+    # FIND_CHZN_DROP = (By.XPATH, f"//*[contains(@class, 'chzn-drop')]")
+    # FIND_CHZN_RESULTS = (By.XPATH, "//*[class='chzn-results']")
+    # TEST_FULL_PATH = (By.XPATH, "/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul")
+    
+    PRECIO_MEDIO_TOTAL = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[1]/td[1]')
+    PRECIO_MEDIO_COM_LIBRE = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[1]/td[2]')
+    PRECIO_MEDIO_COM_REF = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[1]/td[3]')
+    
+    ENERGIA_TOTAL = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[2]/td[1]')
+    ENERGIA_COM_LIBRE = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[2]/td[2]')
+    ENERGIA_COM_REF = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[2]/td[3]')
+
+    CUOTA_COM_LIBRE = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[3]/td[2]')
+    CUOTA_COM_REF = (By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[3]/td[3]')
