@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+# Path: src/data_scraper.py
+# Authors: Esther Manzano, Albert Queraltó
+
+"""
+This is module contains alls the classes and methods that allow to obtain specific data
+from the pages the crawler has navigated to.
+"""
+
 import re
 from sqlite3 import connect
 from bs4 import BeautifulSoup
