@@ -175,10 +175,3 @@ class FileUtils(object):
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.dictionary.keys())
             writer.writerows(zip(*self.dictionary.values()))
-            
-    def check_presence_read_data(self):
-        """
-        Checks if file is present in the folder and reads the data from a CSV file in order to store new columns to it using pandas
-        """
-        if os.path.exists(self.filename):
-            pass
