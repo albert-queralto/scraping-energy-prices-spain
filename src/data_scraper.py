@@ -12,12 +12,94 @@ class MercadoPreciosData(object):
     
     def __init__(self, driver):
         self.driver = driver        
-        self.precio_medio_total = []
+        
+    def get_precio_final_energia(self):
+        """
+        Obtains the energy prices from the *Mercados y precios* webpage.
+        
+        Parameters:
+        -----------
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+            
+        Returns:
+        --------
+        pm_total: float.
+            The total energy price.
+        pm_com_libre: float.
+            The energy price for the free market.
+        pm_com_ref: float.
+            The energy price for the reference market.
+        """
+        pm_total = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_TOTAL)).text
+        pm_com_libre = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_COM_LIBRE)).text
+        pm_com_ref = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_COM_REF)).text
 
-    def precio_final_energia(self):
-        pm_total = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="mypCosteWidgetView"]/div[2]/div[3]/div/table/tbody/tr[1]/td[1]')))
-        print('precio_medio:', pm_total.text)
-        return self.precio_medio_total.append(pm_total)
+        return pm_total, pm_com_libre, pm_com_ref
+
+
+    def get_energia(self):
+        """
+        Obtains the energy data from the *Mercados y precios* webpage and stores them in lists.
+        
+        Parameters:
+        -----------
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+            
+        Returns:
+        --------
+        energia_total: float.
+            The total energy.
+        energia_comercializador_libre: float.
+            The energy for the free market.
+        energia_comercializador_referencia: float.
+            The energy for the reference market.
+        """
+        energia_total = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_TOTAL)).text
+        energia_com_libre = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_COM_LIBRE)).text
+        energia_com_ref = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_COM_REF)).text
+
+        return energia_total, energia_com_libre, energia_com_ref
+
+
+    def get_cuota(self):
+        """
+        Obtains the share data from the *Mercados y precios* webpage and stores them in lists.
+        The total share is 100% therefore, it is not needed to collect it.
+        
+        Parameters:
+        -----------
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+            
+        Returns:
+        --------
+        cuota_comercializador_libre: float.
+            The share for the free market.
+        cuota_comercializador_referencia: float.
+            The share for the reference market.
+        """
+        cuota_com_libre = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.CUOTA_COM_LIBRE)).text
+        cuota_com_ref = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.CUOTA_COM_REF)).text
+
+        return cuota_com_libre, cuota_com_ref
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
