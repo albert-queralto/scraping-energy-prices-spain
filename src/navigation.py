@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Path: src/__main__.py
+# Path: src/navigation.py
 # Authors: Esther Manzano, Albert Queraltó
 
 """
