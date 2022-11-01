@@ -117,13 +117,13 @@ class GeneracionConsumoData(object):
         thermo_renewable_power: float:
             The generated power of renewable thermal energy.
         """
-        percentage_renewable = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.PERC_RENEW_GEN)).text
-        renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.RENEW_GEN_MW)).text
-        wind_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.WIND_MW)).text
-        water_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.WATER_MW)).text
-        solar_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.SOLAR_MW)).text
-        nuclear_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.NUCLEAR_MW)).text
-        thermo_renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(MercadosPreciosPointers.THERMO_RENEW_MW)).text
+        percentage_renewable = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.PERC_RENEW_GEN)).text
+        renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.RENEW_GEN_MW)).text
+        wind_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.WIND_MW)).text
+        water_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.WATER_MW)).text
+        solar_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.SOLAR_MW)).text
+        nuclear_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.NUCLEAR_MW)).text
+        thermo_renewable_power = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(GeneracionConsumoPointers.THERMO_RENEW_MW)).text
         
         return percentage_renewable, renewable_power, wind_power, water_power, solar_power, nuclear_power, thermo_renewable_power
 
