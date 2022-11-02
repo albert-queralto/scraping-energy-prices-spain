@@ -30,6 +30,22 @@ from navigation import *
 from webdriver_utils import *
 from support_functions import *
 
+# Constants
+URL = "https://www.esios.ree.es/es"
+
+
+# Checking robots.txt file of our chosen website
+# Function get_robot_txt is constructed to check any url
+def get_robot_txt(url):
+    if url.endswith('/'):
+        path = url
+    else:
+        path = url + '/'
+    req = requests.get(path + "robots.txt",data =None)
+    return req.text
+
+# Read robots.txt file
+# Print(get_robot_txt(URL))
 
 def order_unittests():
     """
