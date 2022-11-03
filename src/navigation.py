@@ -183,8 +183,13 @@ class NavigationMercadosPrecios(BasePage):
             LI_XPATH = f'/html/body/div[3]/div[2]/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/ul/li[{list_index+1}]'
             
             # Finds the right hour to be selected based on the value of 'list_index' + 1
-            li_elements = self.driver.find_element(By.XPATH, LI_XPATH)
-            print(li_elements.get_attribute("textContent"))
+            try:
+                li_elements = self.driver.find_element(By.XPATH, LI_XPATH)
+                print(li_elements.get_attribute("textContent"))
+            except NoSuchElementException as no_such_element:
+                print(no_such_element)
+                print(f"Unable to find the right hour to be selected.")
+                return self.hour_selection_mercados_precios(list_index)
             
             # Chain actions to find the right hour value
             actions = ActionChains(self.driver)

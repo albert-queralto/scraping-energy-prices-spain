@@ -89,7 +89,7 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 365
+        self.num_previous_days = 265
         self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
         self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
                 
@@ -127,47 +127,47 @@ class ElectricityScraper(unittest.TestCase):
             data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
             data_saver.save_data()
             
-    @ordered_unittests
-    def test_generacion_consumo_scraper(self):
-        """
-        Function that implements the scraper for the *Generación y consumo* page.
-        """
+    # @ordered_unittests
+    # def test_generacion_consumo_scraper(self):
+    #     """
+    #     Function that implements the scraper for the *Generación y consumo* page.
+    #     """
         
-        # Initiate the navigation elements for the first page and open the Chrome session
-        page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
-        page_navigator.open_chrome_session()
-        time.sleep(1)
+    #     # Initiate the navigation elements for the first page and open the Chrome session
+    #     page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
+    #     page_navigator.open_chrome_session()
+    #     time.sleep(1)
         
-        # Go to the *Generación y consumo* page
-        page_navigator.navigate_generacion_consumo()
-        time.sleep(1)
+    #     # Go to the *Generación y consumo* page
+    #     page_navigator.navigate_generacion_consumo()
+    #     time.sleep(1)
         
-        # Initiate the method to perform the hour selection in the *Generación y consumo* page
-        generacion_consumo_navigator =  NavigationGeneracionConsumo(driver=self.driver)
+    #     # Initiate the method to perform the hour selection in the *Generación y consumo* page
+    #     generacion_consumo_navigator =  NavigationGeneracionConsumo(driver=self.driver)
         
-        # Create list with all files in the save directory
-        files = os.listdir('data')
+    #     # Create list with all files in the save directory
+    #     files = os.listdir('data')
         
-        # Navigates through the defined date range
-        for year, month, day in self.date_range:
-            date = f"{day}-{month}-{year}" # Create the date variable
+    #     # Navigates through the defined date range
+    #     for year, month, day in self.date_range:
+    #         date = f"{day}-{month}-{year}" # Create the date variable
             
-            # Check if day, month and year are in the file name and load the file
-            file = [file for file in files if date in file]
-            energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+    #         # Check if day, month and year are in the file name and load the file
+    #         file = [file for file in files if date in file]
+    #         energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
             
-            # Initiate method to get the data from the *Generación y consumo* page
-            generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
-            time.sleep(5)
-            print(self.driver.current_url) # For debugging
+    #         # Initiate method to get the data from the *Generación y consumo* page
+    #         generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
+    #         time.sleep(5)
+    #         print(self.driver.current_url) # For debugging
             
-            renewable_data_iterator = WrapperFunctionsGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
-            renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
+    #         renewable_data_iterator = WrapperFunctionsGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
+    #         renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
             
-            energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
+    #         energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
             
-            # Save the data to a CSV file for each day
-            energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
+    #         # Save the data to a CSV file for each day
+    #         energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
 
 
     def tearDown(self):
