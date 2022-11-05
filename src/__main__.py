@@ -31,11 +31,11 @@ from webdriver_utils import *
 from support_functions import *
 
 # Constants
-URL = "https://www.esios.ree.es/es"
+URL = "https://www.ree.es/es"
 
 
 # Checking robots.txt file of our chosen website
-# Function get_robot_txt is constructed to check any url
+# Function get_robot_txt checks any url
 def get_robot_txt(url):
     if url.endswith('/'):
         path = url
