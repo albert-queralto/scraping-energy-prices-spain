@@ -46,7 +46,8 @@ class NavigationMain(BasePage):
         # while True:
         try:
             self.driver.get(f"{self.base_url}")
-            print(f"{self.base_url}") # Prints the base url for debugging purposes    
+            print(f"{self.base_url}") # Prints the base url for debugging purposes
+            print(self.driver.execute_script("return navigator.userAgent;")) # Check user agent
             return self.driver
         except TimeoutException as timeout: # Catches the timeout exception if the page is unable to load and tries to reload it
             print(f"{timeout}")
