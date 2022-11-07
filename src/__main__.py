@@ -15,25 +15,28 @@ Unit tests were used during the execution to find and handle any errors and
 obtain additional information of those tests.
 """
 
-import unittest
-import random
-import time
 import datetime
 import pandas as pd
+import random
+import sys
+import time
+import unittest
 
 # Webscraping libraries
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
 # Custom libraries
 from navigation import *
-from webdriver_utils import *
 from support_functions import *
+from webdriver_utils import *
 
 # Constants
 URL = "https://www.ree.es/es"
+
+sys.setrecursionlimit(9999)
 
 
 # Checking robots.txt file of our chosen website
@@ -108,7 +111,7 @@ class ElectricityScraper(unittest.TestCase):
         )
 
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 365
+        self.num_previous_days = 361
         self.date_range = [
             datetime.datetime.today() - datetime.timedelta(days=day)
             for day in range(self.num_previous_days)
@@ -183,11 +186,20 @@ class ElectricityScraper(unittest.TestCase):
         # Navigates through the defined date range
         for year, month, day in self.date_range:
             date = f"{day}-{month}-{year}"  # Create the date variable
+            print(f"Processing date: {date}")
 
-            # Check if day, month and year are in the file name and load the
-            # file
-            file = [file for file in files if date in file]
-            energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+            try:
+                # Check if day, month and year are in the file name and load the
+                # file
+                file = [file for file in files if date in file]
+                energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+                energy_prices.to_csv(
+                    f"data/energy_prices_renewable_generation_{date}.csv",
+                    index=False
+                )
+            except Exception:
+                print(f"{Exception}\nThis is the first run.")
+                pass
 
             # Initiate method to get the data from the *Generación y consumo*
             # page
@@ -207,15 +219,23 @@ class ElectricityScraper(unittest.TestCase):
                 renewable_data_iterator.hour_iterator_generacion_libre_co2()
             )
 
-            energy_prices = pd.merge(
-                energy_prices, renewable_data_df, on=["date", "hour"]
-            )
+            try:
+                energy_prices = pd.merge(
+                    energy_prices, renewable_data_df, on=["date", "hour"]
+                )
 
-            # Save the data to a CSV file for each day
-            energy_prices.to_csv(
-                f"data/energy_prices_renewable_generation_{date}.csv",
-                index=False,
-            )
+                # Save the data to a CSV file for each day
+                energy_prices.to_csv(
+                    f"data/energy_prices_renewable_generation_{date}.csv",
+                    index=False,
+                )
+            except:
+                print(f"{Exception}\nWritting first CSV..")
+                renewable_data_df.to_csv(
+                    f"data/energy_prices_renewable_generation_{date}.csv",
+                    index=False
+                )
+                
 
     def tearDown(self):
         """
