@@ -28,7 +28,8 @@ class MainPagePointers(object):
 
 class MercadosPreciosPointers(object):
     """
-    Defines all the variables that enable actions in the *Mercados y precios* page.
+    Defines all the variables that enable actions in the *Mercados y precios*
+    page.
     """
 
     # Variables to locate different elements of the hour selector
@@ -166,3 +167,5 @@ class GeneracionConsumoPointers(object):
         By.XPATH,
         '//*[@id="gycCo2WidgetView"]/div/div[4]/div/div[2]/div[5]/div[2]/div',
     )
+
+    LI_XPATH = f"/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]/div/ul/li[{list_index+1}]"

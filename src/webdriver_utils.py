@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Path: src/webdriver_utils.py
+# Authors: Esther Manzano, Albert Queraltó
+
 class WebDriverOptions(object):
     """
     Class that stores all the variables to setup the WebDriver

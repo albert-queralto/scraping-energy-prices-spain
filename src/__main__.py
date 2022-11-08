@@ -36,7 +36,7 @@ from webdriver_utils import *
 # Constants
 URL = "https://www.ree.es/es"
 
-sys.setrecursionlimit(9999)
+sys.setrecursionlimit(9999) # Keeps iteration running for longer
 
 
 # Checking robots.txt file of our chosen website
@@ -111,7 +111,7 @@ class ElectricityScraper(unittest.TestCase):
         )
 
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 361
+        self.num_previous_days = 260
         self.date_range = [
             datetime.datetime.today() - datetime.timedelta(days=day)
             for day in range(self.num_previous_days)
