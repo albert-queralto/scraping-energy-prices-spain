@@ -111,7 +111,7 @@ class ElectricityScraper(unittest.TestCase):
         )
 
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 260
+        self.num_previous_days = 230
         self.date_range = [
             datetime.datetime.today() - datetime.timedelta(days=day)
             for day in range(self.num_previous_days)

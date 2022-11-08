@@ -463,9 +463,8 @@ class NavigationGeneracionConsumo(BasePage):
                     time.sleep(1)
 
             # Handle the selection of the right hour
-            # XPATH for the li locator to be found. Function looking at 
-            # font_code_pointers.py to locate the variable
-            MercadosPreciosPointers.LI_XPATH
+            # XPATH for the li locator to be found
+            LI_XPATH = f"/html/body/div[3]/div[2]/div/div/div[3]/aside/div/div/div[3]/div/div/div[1]/div/ul/li[{list_index+1}]"
 
             # Finds the right hour to be selected based on the value of 'list_index' + 1
             li_elements = self.driver.find_element(By.XPATH, LI_XPATH)
