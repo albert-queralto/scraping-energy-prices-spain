@@ -159,7 +159,6 @@ data/
 *.pkl
 *.pth
 *.pdf
-*.txt
 *.csv
 
 .ipynb_checkpoints
