@@ -89,43 +89,43 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 720
-        self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        self.num_previous_days = 287
+        self.date_range = [datetime.datetime(2021, 11, 1) - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
         self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
                 
-    @ordered_unittests
-    def test_mercado_precios_scraper(self):
-        """
-        Function that implements the scraper for the *Mercado y precios* page.
-        """
+    # @ordered_unittests
+    # def test_mercado_precios_scraper(self):
+    #     """
+    #     Function that implements the scraper for the *Mercado y precios* page.
+    #     """
         
-        # Initiate the navigation elements for the first page and open the Chrome session
-        page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
-        page_navigator.open_chrome_session()
-        time.sleep(1)
+    #     # Initiate the navigation elements for the first page and open the Chrome session
+    #     page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
+    #     page_navigator.open_chrome_session()
+    #     time.sleep(1)
         
-        # Go to the *Mercados y precios* page
-        page_navigator.navigate_mercados_precios()
-        time.sleep(1)
+    #     # Go to the *Mercados y precios* page
+    #     page_navigator.navigate_mercados_precios()
+    #     time.sleep(1)
         
-        # Initiate the method to perform the hour selection in the *Mercados y precios* page
-        mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
+    #     # Initiate the method to perform the hour selection in the *Mercados y precios* page
+    #     mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
         
-        # Navigates through the defined date range
-        for year, month, day in self.date_range:
-            date = f"{day}-{month}-{year}" # Create the date variable
+    #     # Navigates through the defined date range
+    #     for year, month, day in self.date_range:
+    #         date = f"{day}-{month}-{year}" # Create the date variable
             
-            # Initiate method to get the data from the *Mercados y precios* page
-            mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
-            time.sleep(5)
-            print(self.driver.current_url) # For debugging
+    #         # Initiate method to get the data from the *Mercados y precios* page
+    #         mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
+    #         time.sleep(5)
+    #         print(self.driver.current_url) # For debugging
             
-            market_prices_data_iterator = WrapperFunctionsMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
-            market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
+    #         market_prices_data_iterator = WrapperFunctionsMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
+    #         market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
                 
-            # Save the data to a CSV file for each day
-            data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
-            data_saver.save_data()
+    #         # Save the data to a CSV file for each day
+    #         data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
+    #         data_saver.save_data()
             
     @ordered_unittests
     def test_generacion_consumo_scraper(self):
@@ -150,7 +150,6 @@ class ElectricityScraper(unittest.TestCase):
         full_path = os.path.join(path, 'data')
         # files = os.listdir('data')
         files = os.listdir(full_path)
-        print(files)
         
         # Navigates through the defined date range
         for year, month, day in self.date_range:
@@ -158,7 +157,8 @@ class ElectricityScraper(unittest.TestCase):
             
             # Check if day, month and year are in the file name and load the file
             file = [file for file in files if date in file]
-            energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+            # energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+            energy_prices = pd.read_csv(os.path.join(full_path, f"{file[0]}"), sep=";")
             
             # Initiate method to get the data from the *Generación y consumo* page
             generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
@@ -171,7 +171,8 @@ class ElectricityScraper(unittest.TestCase):
             energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
             
             # Save the data to a CSV file for each day
-            energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
+            # energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
+            energy_prices.to_csv(os.path.join(full_path, f"energy_prices_renewable_generation_{date}.csv"), index=False)
 
 
     def tearDown(self):
