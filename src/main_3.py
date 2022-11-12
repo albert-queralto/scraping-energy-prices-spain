@@ -162,7 +162,7 @@ class ElectricityScraper(unittest.TestCase):
             time.sleep(5)
             print(self.driver.current_url) # For debugging
             
-            market_prices_data_iterator = WrapperFunctionsMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
+            market_prices_data_iterator = WrapperMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
             market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
                 
             # Save the data to a CSV file for each day
