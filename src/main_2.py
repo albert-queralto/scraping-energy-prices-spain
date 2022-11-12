@@ -18,6 +18,7 @@ import random
 import time
 import datetime
 import pandas as pd
+import re
 
 # Webscraping libraries
 from selenium.webdriver import Chrome
@@ -89,9 +90,9 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 200
-        self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
-        self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
+        # self.num_previous_days = 200
+        # self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        # self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
                 
     # @ordered_unittests
     # def test_mercado_precios_scraper(self):
@@ -148,31 +149,40 @@ class ElectricityScraper(unittest.TestCase):
         # Create list with all files in the save directory
         path = "/home/albert/Desktop/Tipologia i cicle de vida de les dades/PRA1/"
         full_path = os.path.join(path, 'data')
-        # files = os.listdir('data')
         files = os.listdir(full_path)
         
+        # get dates from file names in files using regex consider if there is one or two digits
+        dates = [re.findall(r'\d{1,2}-\d{1,2}-\d{4}', file) for file in files]
+        
+        # flatten the list
+        dates = [item for sublist in dates for item in sublist]
+
         # Navigates through the defined date range
-        for year, month, day in self.date_range:
-            date = f"{day}-{month}-{year}" # Create the date variable
-            
-            # Check if day, month and year are in the file name and load the file
-            file = [file for file in files if date in file]
-            # energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
-            energy_prices = pd.read_csv(os.path.join(full_path, f"{file[0]}"), sep=";")
-            
-            # Initiate method to get the data from the *Generación y consumo* page
-            generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
-            time.sleep(5)
-            print(self.driver.current_url) # For debugging
-            
-            renewable_data_iterator = WrapperFunctionsGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
-            renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
-            
-            energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
-            
-            # Save the data to a CSV file for each day
-            # energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
-            energy_prices.to_csv(os.path.join(full_path, f"energy_prices_renewable_generation_{date}.csv"), index=False)
+        for date in dates:
+            print(date)
+            day, month, year = date.split('-')           
+            try:
+                # Check if day, month and year are in the file name and load the file
+                file = [file for file in files if date in file]
+                # energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+                energy_prices = pd.read_csv(os.path.join(full_path, f"{file[0]}"), sep=";")
+                
+                # Initiate method to get the data from the *Generación y consumo* page
+                generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
+                time.sleep(5)
+                print(self.driver.current_url) # For debugging
+                
+                renewable_data_iterator = WrapperFunctionsGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
+                renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
+                
+                energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
+                
+                # Save the data to a CSV file for each day
+                # energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
+                energy_prices.to_csv(os.path.join(full_path, f"energy_prices_renewable_generation_{date}.csv"), index=False)
+            except Exception as e:
+                print(e)
+                continue
 
 
     def tearDown(self):

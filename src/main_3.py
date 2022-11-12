@@ -18,6 +18,7 @@ import random
 import time
 import datetime
 import pandas as pd
+import re
 
 # Webscraping libraries
 from selenium.webdriver import Chrome
@@ -89,9 +90,9 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 218
-        self.date_range = [datetime.datetime(2021, 11, 1) - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
-        self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
+        # self.num_previous_days = 218
+        # self.date_range = [datetime.datetime(2021, 11, 1) - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        # self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
                 
     @ordered_unittests
     def test_mercado_precios_scraper(self):
@@ -111,8 +112,49 @@ class ElectricityScraper(unittest.TestCase):
         # Initiate the method to perform the hour selection in the *Mercados y precios* page
         mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
         
+        # Create list with all files in the save directory
+        path = "/home/albert/Desktop/Tipologia i cicle de vida de les dades/PRA1/"
+        full_path = os.path.join(path, 'data', 'already_merged', 'mercados_precios')
+        files = os.listdir(full_path)
+
+        # get the dates from the filenames in the full path folder
+        dates = []
+        for file in files:
+            date = re.findall(r'\d{1,2}-\d{1,2}-\d{4}', file)
+
+            # split date in day-month-year
+            day, month, year = date[0].split('-')
+            # add zero to the left of day and month if the length is not 2
+            if len(day) == 1:
+                day = '0' + day
+            if len(month) == 1:
+                month = '0' + month
+            # create date string
+            date = day + "-" + month + "-" + year
+            dates.append(date)
+
+        # find missing dates in a period from 1-11-2020 to 31-10-2022
+        start_date = datetime.date(2020, 11, 1)
+        end_date = datetime.date(2022, 10, 31)
+        delta = datetime.timedelta(days=1)
+        dates_list = []
+        while start_date <= end_date:
+            dates_list.append(start_date.strftime("%d-%m-%Y"))
+            start_date += delta
+
+        # find the missing dates
+        missing_dates = []
+        for date_val in dates_list:
+            if date_val not in dates:
+                # convert to datetime
+                date = datetime.datetime.strptime(date_val, "%d-%m-%Y")
+                missing_dates.append(date)
+        
+        missing_dates = [(date.year, date.month, date.day) for date in reversed(missing_dates)]
+        
+        
         # Navigates through the defined date range
-        for year, month, day in self.date_range:
+        for year, month, day in missing_dates:
             date = f"{day}-{month}-{year}" # Create the date variable
             
             # Initiate method to get the data from the *Mercados y precios* page
