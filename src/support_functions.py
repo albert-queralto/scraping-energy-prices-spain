@@ -29,9 +29,9 @@ class ExtendedActions(ActionChains):
         return self
 
 
-class WrapperFunctionsMercadoPrecios(object):
+class WrapperMercadoPrecios(object):
     """
-    Contains functions with the program logic and other utilities to scrape the *Mercado y precios* website.
+    Contains methods with the program logic and other utilities to scrape the *Mercado y precios* website.
     """
 
     def __init__(self, date, max_hour, mercado_precio_nav, driver):
@@ -115,9 +115,9 @@ class WrapperFunctionsMercadoPrecios(object):
         return self.market_price
 
 
-class WrapperFunctionsGeneracionConsumo(object):
+class WrapperGeneracionConsumo(object):
     """
-    Contains functions with the program logic and other utilities to scrape the *Generación y consumo* website.
+    Contains methods with the program logic and other utilities to scrape the *Generación y consumo* website.
     """
 
     def __init__(self, date, max_hour, generacion_consumo_nav, driver):
