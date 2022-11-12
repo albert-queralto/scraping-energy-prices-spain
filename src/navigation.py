@@ -373,7 +373,7 @@ class NavigationGeneracionConsumo(BasePage):
                 try:
                     select_hour_timepicker.click()
                     select_drop_down = self.driver.find_element(
-                        GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[0], eneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[1])
+                        GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[0], GeneracionConsumoPointers.HOUR_LIST_ACTIVE_DROP[1])
                     time.sleep(1)
                 # Handle the exception when the element is not interactable
                 except ElementNotInteractableException as element_not_interactable:
