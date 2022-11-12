@@ -205,14 +205,159 @@ class FileUtils(object):
         if not os.path.exists("data"):
             os.makedirs("data")
 
+        # Initialize variables to save data or check missing files
         self.filename = os.path.join("data", filename)
         self.dictionary = dictionary
+        self.missing_files_mercados_precios = []
+        self.missing_files_generacion_consumo = []
 
     def save_data(self):
         """
         Saves the data to a CSV file.
         """
-        with open(self.filename, "w", newline="\n") as csv_file:
-            writer = csv.writer(csv_file, delimiter=";")
-            writer.writerow(self.dictionary.keys())
-            writer.writerows(zip(*self.dictionary.values()))
+        try:
+            with open(self.filename, "w", newline="\n") as csv_file:
+                writer = csv.writer(csv_file, delimiter=";")
+                writer.writerow(self.dictionary.keys())
+                writer.writerows(zip(*self.dictionary.values()))
+        except Exception as e:
+            print(f"Error saving data to {self.filename}: {e}")
+            print("Trying again...")
+            self.save_data()
+            
+            
+    def empty_files(self, filenames):
+        """
+        Method that finds if scrape data has not been saved properly.
+        If so, deletes the file so that these dates can be scraped again.
+        
+        Empty files only contain headers but no other data. Their size
+        is smaller than 1 kB (typically around 500 bytes)
+        """
+        
+        for file in filenames:
+            if os.path.getsize(file) < 1000:
+                try:
+                    os.remove(file)
+                    print(f"File {file} has been deleted because it was empty.")
+                except Exception as e:
+                    print(f"Error deleting file {file}: {e}")
+                    print("Trying again...")
+                    self.empty_files(filenames)
+
+            
+    def get_file_dates(self, filenames):
+        """
+        Method that gets the dates of the files in the data folder.
+        
+        Returns:
+        --------
+        file_dates: list.
+            List of dates in the files present in the data folder.
+        """
+        file_dates = []
+        for file in filenames:
+            date = re.findall(r'\d{4}-\d{1,2}-\d{1,2}', file)
+
+            # Create date string and append to file_dates
+            date = day + "-" + month + "-" + year
+            file_dates.append(date)
+        return file_dates
+            
+            
+    def missing_mercados_precios(self):
+        """
+        Checks if there is data missing from *Mercados y precios* in the set 
+        range of dates and return the dates missing.
+        
+        Parameters:
+        -----------
+        self.dates_list: list.
+            List of dates were data has been scraped.
+        self.missing_files_mercados_precios: list.
+            List of dates were data is missing.
+        self.empty_files: method.
+            Method that deletes empty files.
+        self.get_file_dates: method.
+            Method that gets the dates of the files in the data folder.
+            
+        Returns:
+        --------
+        self.missing_files_mercados_precios: list.
+            List of dates that are missing from the data folder.
+        """
+        
+        # Get all filenames with .csv extension in data folder and that
+        # do not have "renewable_generation" in the name (i.e. files
+        # containing only data from *Mercados y precios*)
+        filenames = [
+            filename
+            for filename in os.listdir("data")
+            if filename.endswith(".csv")
+            and "renewable_generation" not in filename
+        ]
+        
+        # Check if there are empty files and delete them
+        self.empty_files(filenames=filenames)
+        
+        # Get the dates of the remaining files
+        file_dates = self.get_file_dates(filenames=filenames)
+
+        # Find missing dates to scrape again
+        for date_element in self.dates_list:
+            if date_element not in file_dates:
+                date = datetime.datetime.strptime(date_element, "%d-%m-%Y")
+                print(f"Missing data for {date.strftime('%d-%m-%Y')}")
+                self.missing_files_mercados_precios.append(date)
+        
+        self.missing_files_mercados_precios = [(date.year, date.month, date.day) for date in reversed(self.missing_files_mercados_precios)]
+        print(f"Missing files: {len(self.missing_files_mercados_precios)}")
+        
+        
+    def missing_generacion_consumo(self):
+        """
+        Checks if there is data missing from *Generación y consumo* in the set 
+        range of dates and return the dates missing.
+        
+        Parameters:
+        -----------
+        self.dates_list: list.
+            List of dates were data has been scraped.
+        self.missing_files_generacion_consumo: list.
+            List of dates were data is missing.
+        self.empty_files: method.
+            Method that deletes empty files.
+        self.get_file_dates: method.
+            Method that gets the dates of the files in the data folder.
+            
+        Returns:
+        --------
+        self.missing_files_generacion_consumo: list.
+            List of dates that are missing from the data folder.
+        """
+        
+        # Get all filenames with .csv extension in data folder and that
+        # have "renewable_generation" in the name (i.e. files
+        # containing only data from *Generación y consumo*)
+        filenames = [
+            filename
+            for filename in os.listdir("data")
+            if filename.endswith(".csv")
+            and "renewable_generation" in filename
+        ]
+        
+        # Check if there are empty files and delete them
+        self.empty_files(filenames=filenames)
+        
+        # Get the dates of the remaining files
+        file_dates = self.get_file_dates(filenames=filenames)
+
+        # Find missing dates to scrape again
+        for date_element in self.dates_list:
+            if date_element not in file_dates:
+                date = datetime.datetime.strptime(date_element, "%d-%m-%Y")
+                print(f"Missing data for {date.strftime('%d-%m-%Y')}")
+                self.missing_files_generacion_consumo.append(date)
+        
+        self.missing_files_generacion_consumo = [(date.year, date.month, date.day) for date in reversed(self.missing_files_generacion_consumo)]
+        print(f"Missing files: {len(self.missing_files_generacion_consumo)}")
