@@ -172,7 +172,7 @@ class ElectricityScraper(unittest.TestCase):
                 time.sleep(5)
                 print(self.driver.current_url) # For debugging
                 
-                renewable_data_iterator = WrapperFunctionsGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
+                renewable_data_iterator = WrapperGeneracionConsumo(date=date, max_hour=24, generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
                 renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
                 
                 energy_prices = pd.merge(energy_prices, renewable_data_df, on=['date', 'hour'])
