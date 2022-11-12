@@ -1,4 +1,4 @@
-# Webscraping practicum
+# Webscraping of energy prices data and renewable energy production
 
 ## Install dependencies
 
@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 This repository contains the code, data and documentation done in the framework
 of a practice exercise for the class *Tipologia i cicle de vida de les dades*
-from the *Master in Data Science of the Universitat Oberta de Catalunya*.
+from the *Master in Data Science* of the *Universitat Oberta de Catalunya*.
 
 The exercise consisted in extracting data using *Web Scraping* with Python from
 the website *https://www.esios.ree.es/es/*.
@@ -23,8 +23,8 @@ commercial interest in the use of the data extracted.
 
 ## Authors 
 
-The authors of this activity are: **Esther Manzano i Martín** i **Albert
-Queraltó López**.
+The authors of this activity are: **Esther Manzano i Martín** and **Albert
+Queraltó i López**.
 
 ## Source code
 
@@ -36,13 +36,11 @@ Queraltó López**.
 * **src/font_code_pointers.py:** contains classes that classify the variables
   with information to locate the different page elements.
 * **src/support_functions.py:** contains additional classes and methods to have
-  cleaner code in the main page, as well as the functionality to save the data.
+  cleaner code in the main page, as well as the functionality to save the data
+  and get missing data.
 
-## Data
+## Dataset
 
 The data extracted from the website is stored in the folder **dataset**. The
 data is stored in a unique *.csv* file and contains hourly data in a range of
-dates from *02-11-2021* to *07-11-2022*.
-
-
-## References
+dates from *01-11-2020* to *31-10-2022*.
