@@ -20,7 +20,7 @@ import pandas as pd
 import random
 import sys
 import time
-import unittest
+import re
 
 # Webscraping libraries
 from selenium.webdriver import Chrome
@@ -54,51 +54,27 @@ def get_robot_txt(url):
 # Print(get_robot_txt(URL))
 
 
-def order_unittests():
+class ElectricityScraper:
     """
-    Allows to control the order in which unittests are performed. Works as a
-    decorator function to be applied on the unittests.
-    Source: https://codereview.stackexchange.com/questions/122532/controlling-the-order-of-unittest-testcases
-    """
-    ordered_tests = {}
-
-    def ordered_unittests(f):
-        ordered_tests[f.__name__] = len(ordered_tests)
-        return f
-
-    def compare_order_unittests(a, b):
-        return [1, -1][ordered_tests[a] < ordered_tests[b]]
-
-    return ordered_unittests, compare_order_unittests
-
-
-# Define the order of unittests
-ordered_unittests, compare_order_unittests = order_unittests()
-unittest.defaultTestLoader.sortTestMethodsUsing = compare_order_unittests
-
-
-class ElectricityScraper(unittest.TestCase):
-    """
-    Contains the methods used to scrape data from: https://www.esios.ree.es/es
-    The unittest library is used to check for any errors during the execution of
-    the crawler, allowing for better debugging.
+    Contains the methods used to scrape data from: https://www.esios.ree.es/es.
     """
 
-    def setUp(self):
+    def __init__(self, start_date, end_date):
         """
-        Method that includes all the elements that the test each test requires
-        for execution. Similar to the __init__ method.
+        Method that includes all the elements that are required during initialization.
         """
-        options = Options()  # Define custom options for the WebDriver
+        
+        # WebDriver options
+        options = Options() 
         options.headless = (
             False  # Option to show the browser window (True) or not (False)
         )
         options.add_argument(
             f"user-agent={random.choice(WebDriverOptions.user_agents)}"
-        )  # Setup a custom User-Agent to prevent detection
+        )  # Prevent being identified as a bot with custom User-Agents
         options.add_argument(
             "content-type=application/x-www-form-urlencoded"
-        )  # Setup content-type
+        )
 
         # Initiate the webdriver, installs it if not present and implements the previous options
         self.driver = Chrome(
@@ -109,63 +85,110 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = (
             "https://www.esios.ree.es/es"  # Base URL that we want to scrape
         )
+        
+        # Generate a list with the period of time used to scrape the data
+        self.start_date = datetime.datetime(start_date[0], start_date[1], start_date[2])
+        self.end_date = datetime.datetime(end_date[0], end_date[1], end_date[2])
+        self.delta = datetime.timedelta(days=1)
+        self.dates_list = []
+        
+        while self.start_date <= self.end_date:
+            self.dates_list.append(start_date.strftime("%d-%m-%Y"))
+            self.start_date += self.delta
 
-        # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        self.num_previous_days = 230
-        self.date_range = [
-            datetime.datetime.today() - datetime.timedelta(days=day)
-            for day in range(self.num_previous_days)
-        ]
-        self.date_range = [
-            (date.year, date.month, date.day)
-            for date in reversed(self.date_range)
-        ]
 
-    # @ordered_unittests
-    # def test_mercado_precios_scraper(self):
-    #     """
-    #     Function that implements the scraper for the *Mercado y precios* page.
-    #     """
-
-    #     # Initiate the navigation elements for the first page and open the Chrome session
-    #     page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
-    #     page_navigator.open_chrome_session()
-    #     time.sleep(1)
-
-    #     # Go to the *Mercados y precios* page
-    #     page_navigator.navigate_mercados_precios()
-    #     time.sleep(1)
-
-    #     # Initiate the method to perform the hour selection in the *Mercados y precios* page
-    #     mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
-
-    #     # Navigates through the defined date range
-    #     for year, month, day in self.date_range:
-    #         date = f"{day}-{month}-{year}" # Create the date variable
-
-    #         # Initiate method to get the data from the *Mercados y precios* page
-    #         mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
-    #         time.sleep(5)
-    #         print(self.driver.current_url) # For debugging
-
-    #         market_prices_data_iterator = WrapperFunctionsMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
-    #         market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
-
-    #         # Save the data to a CSV file for each day
-    #         data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
-    #         data_saver.save_data()
-
-    @ordered_unittests
-    def test_generacion_consumo_scraper(self):
+    def mercado_precios_scraper(self):
         """
-        Function that implements the scraper for the *Generación y consumo*
-        page.
+        Method that implements the scraper for the *Mercado y precios* page.
         """
 
-        # Initiate the navigation elements for the first page and open the
-        # Chrome session
+        # Initiate the navigation elements for the first page and open the Chrome session
         page_navigator = NavigationMain(
-            driver=self.driver, base_url=self.base_url
+            driver=self.driver, 
+            base_url=self.base_url
+            )
+        page_navigator.open_chrome_session()
+        time.sleep(1)
+
+        # Go to the *Mercados y precios* page
+        page_navigator.navigate_mercados_precios()
+        time.sleep(1)
+
+        # Initiate the method to perform the hour selection in the *Mercados y precios* page
+        mercado_precio_navigator =  NavigationMercadosPrecios(
+            driver=self.driver
+        )
+
+        # Navigates through the defined date range
+        for year, month, day in self.dates_list:
+            date = f"{day}-{month}-{year}"
+            print(f"Processing date: {date}")
+
+            mercado_precio_navigator.date_navigator(
+                year=year, 
+                month=month, 
+                day=day
+            )
+            time.sleep(5)
+            print(self.driver.current_url) # For debugging the correct URL
+
+            # Wrapper method that contains the functionality to scrape the data from the *Mercados y precios* page
+            market_prices_data_iterator = WrapperFunctionsMercadoPrecios(
+                date=date, 
+                max_hour=24, 
+                mercado_precio_nav=mercado_precio_navigator, 
+                driver=self.driver
+            )
+            
+            market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
+
+            # Save the data to a CSV file for each day
+            data_saver = FileUtils(
+                filename=f'energy_prices_{date}.csv',
+                dictionary=market_price
+            )
+            data_saver.save_data()
+            
+            # Check if there is missing files in the data folder
+            data_saver.missing_mercados_precios()
+            
+            # While data_saver.missing_files_mercados_precios is not empty list
+            # Run the scraper again on the dates inside missing_files_mercados_precios
+            # and save the data to a CSV file for each day
+            while data_saver.missing_files_mercados_precios:
+                for date in data_saver.missing_files_mercados_precios:
+                    mercado_precio_navigator.date_navigator(
+                        year=year, 
+                        month=month, 
+                        day=day
+                    )
+                    time.sleep(5)
+                    print(self.driver.current_url)
+                    
+                    market_prices_data_iterator = WrapperFunctionsMercadoPrecios(
+                        date=date, 
+                        max_hour=24, 
+                        mercado_precio_nav=mercado_precio_navigator, 
+                        driver=self.driver
+                    )
+
+                    market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
+                    data_saver = FileUtils(
+                        filename=f'energy_prices_{date}.csv', 
+                        dictionary=market_price
+                    )
+                    data_saver.save_data()
+
+
+    def generacion_consumo_scraper(self):
+        """
+        Method that implements the scraper for the *Generación y consumo* page.
+        """
+
+        # Initiate the navigation elements for the first page and open the Chrome session
+        page_navigator = NavigationMain(
+            driver=self.driver, 
+            base_url=self.base_url
         )
         page_navigator.open_chrome_session()
         time.sleep(1)
@@ -174,8 +197,7 @@ class ElectricityScraper(unittest.TestCase):
         page_navigator.navigate_generacion_consumo()
         time.sleep(1)
 
-        # Initiate the method to perform the hour selection in the *Generación y
-        # consumo* page
+        # Initiate the method to perform the hour selection in the *Generación y consumo* page
         generacion_consumo_navigator = NavigationGeneracionConsumo(
             driver=self.driver
         )
@@ -184,13 +206,12 @@ class ElectricityScraper(unittest.TestCase):
         files = os.listdir("data")
 
         # Navigates through the defined date range
-        for year, month, day in self.date_range:
-            date = f"{day}-{month}-{year}"  # Create the date variable
+        for year, month, day in self.dates_list:
+            date = f"{day}-{month}-{year}"
             print(f"Processing date: {date}")
 
             try:
-                # Check if day, month and year are in the file name and load the
-                # file
+                # Check if day, month and year are in the file name and load the file
                 file = [file for file in files if date in file]
                 energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
                 energy_prices.to_csv(
@@ -204,10 +225,12 @@ class ElectricityScraper(unittest.TestCase):
             # Initiate method to get the data from the *Generación y consumo*
             # page
             generacion_consumo_navigator.date_navigator(
-                year=year, month=month, day=day
+                year=year, 
+                month=month, 
+                day=day
             )
             time.sleep(5)
-            print(self.driver.current_url)  # For debugging
+            print(self.driver.current_url) # For debugging the correct URL
 
             renewable_data_iterator = WrapperFunctionsGeneracionConsumo(
                 date=date,
@@ -215,6 +238,7 @@ class ElectricityScraper(unittest.TestCase):
                 generacion_consumo_nav=generacion_consumo_navigator,
                 driver=self.driver,
             )
+            
             renewable_data_df = (
                 renewable_data_iterator.hour_iterator_generacion_libre_co2()
             )
@@ -236,16 +260,69 @@ class ElectricityScraper(unittest.TestCase):
                     index=False
                 )
                 
+                
+            # While data_saver.missing_files_generacion_consumo is not empty list
+            # Run the scraper again on the dates inside missing_files_generacion_consumo
+            # and save the data to a CSV file for each day
+            while data_saver.missing_files_generacion_consumo:
+                for date in data_saver.missing_files_generacion_consumo:
+                    generacion_consumo_navigator.date_navigator(
+                        year=year, 
+                        month=month, 
+                        day=day
+                    )
+                    time.sleep(5)
+                    print(self.driver.current_url) # For debugging the correct URL
+                    
+                    renewable_data_iterator = WrapperFunctionsGeneracionConsumo(
+                        date=date,
+                        max_hour=24,
+                        generacion_consumo_nav=generacion_consumo_navigator,
+                        driver=self.driver,
+                    )
 
-    def tearDown(self):
+                    renewable_data_df = (
+                        renewable_data_iterator.hour_iterator_generacion_libre_co2()
+                    )
+
+                    try:
+                        energy_prices = pd.merge(
+                            energy_prices, renewable_data_df, on=["date", "hour"]
+                        )
+
+                        # Save the data to a CSV file for each day
+                        energy_prices.to_csv(
+                            f"data/energy_prices_renewable_generation_{date}.csv",
+                            index=False,
+                        )
+                    except:
+                        print(f"{Exception}\nWritting first CSV..")
+                        renewable_data_df.to_csv(
+                            f"data/energy_prices_renewable_generation_{date}.csv",
+                            index=False
+                        )
+                
+
+    def CloseDriver(self):
         """
-        Method that includes all the instructions used after the unittest is
-        performed.
+        Method that includes all the instructions used after finishing
+        to scrape the data.
         """
+        
         # Close and quit the driver
         self.driver.close()
         self.driver.quit()
 
 
 if __name__ == "__main__":
-    unittest.main(warnings="ignore")
+    # Set the period of time to scrape
+    start_date = (2020, 11, 1)
+    end_date = (2022, 10, 31)
+    
+    
+    electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
+    electricity_scraper.mercado_precios_scraper()
+    electricity_scraper.generacion_consumo_scraper()
+    electricity_scraper.CloseDriver()
+    
+    
