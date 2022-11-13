@@ -82,6 +82,19 @@ class ElectricityScraper:
             self.dates_list.append(start_date.strftime("%Y-%m-%d"))
             self.start_date += self.delta
 
+<<<<<<< HEAD
+=======
+        # Set days before the actual day to scrape and create a list of dates and transform them to tuples
+        self.num_previous_days = 378
+        self.date_range = [
+            datetime.datetime.today() - datetime.timedelta(days=day)
+            for day in range(self.num_previous_days)
+        ]
+        self.date_range = [
+            (date.year, date.month, date.day)
+            for date in reversed(self.date_range)
+        ]
+>>>>>>> 99d43f0 (small changes.)
 
     def mercado_precios_scraper(self):
         """
