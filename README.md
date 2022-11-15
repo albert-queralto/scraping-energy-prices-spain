@@ -1,4 +1,4 @@
-# Webscraping of energy prices data and renewable energy production
+# Webscraping of Energy Prices Data and Renewable Energy Production
 
 ## Install dependencies
 
