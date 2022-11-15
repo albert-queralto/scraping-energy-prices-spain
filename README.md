@@ -1,6 +1,6 @@
 # Webscraping of Energy Prices Data and Renewable Energy Production
 
-## Install dependencies
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -26,7 +26,7 @@ commercial interest in the use of the data extracted.
 The authors of this activity are: **Esther Manzano i Martín** and **Albert
 Queraltó i López**.
 
-## Source code
+## Source Code
 
 * **src/__main__.py:** starts the scraping process.
 * **src/navigation.py:** contains all classes and methods that enable the
