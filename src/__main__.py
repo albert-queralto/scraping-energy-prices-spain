@@ -73,15 +73,16 @@ class ElectricityScraper:
         self.base_url = ("https://www.esios.ree.es/es") # Base URL that we want to scrape
         
         # Generate a list with the period of time used to scrape the data
-        self.start_date = datetime.datetime(start_date[0], start_date[1], start_date[2])
-        self.end_date = datetime.datetime(end_date[0], end_date[1], end_date[2])
+        # transform string dates to datetime and exclude the hour
+        self.start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        self.end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
         self.delta = datetime.timedelta(days=1)
         self.dates_list = []
         
         while self.start_date <= self.end_date:
-            self.dates_list.append(start_date.strftime("%Y-%m-%d"))
+            self.dates_list.append(self.start_date.strftime("%Y-%m-%d"))
             self.start_date += self.delta
-
+            
 
     def mercado_precios_scraper(self):
         """
@@ -101,9 +102,13 @@ class ElectricityScraper:
         mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
 
         # Navigates through the defined date range
-        for year, month, day in self.dates_list:
-            date = f"{year}-{month}-{day}"
+        for date in self.dates_list:
             print(f"Processing date: {date}")
+            
+            # Get the year, month and day. Pass it to the date navigator
+            year = date.split("-")[0]
+            month = date.split("-")[1]
+            day = date.split("-")[2]
 
             mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
             time.sleep(5)
@@ -159,12 +164,16 @@ class ElectricityScraper:
         files = os.listdir("data")
 
         # Navigates through the defined date range
-        for year, month, day in self.dates_list:
-            date = f"{day}-{month}-{year}"
+        for date in self.dates_list:
             print(f"Processing date: {date}")
+            
+            # Get the year, month and day. Pass it to the date navigator
+            year = date.split("-")[0]
+            month = date.split("-")[1]
+            day = date.split("-")[2]
 
             try:
-                # Check if day, month and year are in the file name and load the file
+                # Check if year, month and day are in the file name and load the file
                 file = [file for file in files if date in file]
                 energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
                 energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
@@ -223,8 +232,8 @@ class ElectricityScraper:
 
 if __name__ == "__main__":
     # Set the period of time to scrape
-    start_date = (2020, 11, 1)
-    end_date = (2022, 10, 31)
+    start_date = "2020-11-01"
+    end_date = "2022-10-31"
     
     
     electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
