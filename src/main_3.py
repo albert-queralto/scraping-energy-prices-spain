@@ -133,7 +133,7 @@ class ElectricityScraper(unittest.TestCase):
             date = day + "-" + month + "-" + year
             dates.append(date)
 
-        # find missing dates in a period from 1-11-2020 to 31-10-2022
+        # find missing dates in a period from 01-11-2020 to 31-10-2022
         start_date = datetime.date(2020, 11, 1)
         end_date = datetime.date(2022, 10, 31)
         delta = datetime.timedelta(days=1)
