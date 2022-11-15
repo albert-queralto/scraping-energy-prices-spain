@@ -8,7 +8,9 @@ It contains class extensions, wrapper functions and file utils.
 """
 
 import os
+import re
 import csv
+import datetime
 import pandas as pd
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -217,13 +219,14 @@ class FileUtils(object):
         If so, deletes the file so that these dates can be scraped again.
         
         Empty files only contain headers but no other data. Their size
-        is smaller than 1 kB (typically around 500 bytes)
+        is smaller than 500 bytes.
         """
         
         for file in filenames:
-            if os.path.getsize(file) < 1000:
+            file = os.path.join("data", file)
+            if os.path.getsize(file) < 500:
                 try:
-                    os.remove(file)
+                    # os.remove(file)
                     print(f"File {file} has been deleted because it was empty.")
                 except Exception as e:
                     print(f"Error deleting file {file}: {e}")
@@ -243,21 +246,21 @@ class FileUtils(object):
         file_dates = []
         for file in filenames:
             date = re.findall(r'\d{4}-\d{1,2}-\d{1,2}', file)
-
-            # Create date string and append to file_dates
-            date = day + "-" + month + "-" + year
-            file_dates.append(date)
+            
+            # Get the date of the file and append it to the list
+            if len(date) > 0:
+                file_dates.append(date[0])
         return file_dates
             
             
-    def missing_mercados_precios(self):
+    def missing_mercados_precios(self, dates_list):
         """
         Checks if there is data missing from *Mercados y precios* in the set 
         range of dates and return the dates missing.
         
         Parameters:
         -----------
-        self.dates_list: list.
+        dates_list: list.
             List of dates were data has been scraped.
         self.missing_files_mercados_precios: list.
             List of dates were data is missing.
@@ -284,7 +287,7 @@ class FileUtils(object):
         file_dates = self.get_file_dates(filenames=filenames)
 
         # Find missing dates to scrape again
-        for date_element in self.dates_list:
+        for date_element in dates_list:
             if date_element not in file_dates:
                 date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
                 print(f"Missing data for {date.strftime('%Y-%m-%d')}")
@@ -294,14 +297,14 @@ class FileUtils(object):
         print(f"Missing files: {len(self.missing_files_mercados_precios)}")
         
         
-    def missing_generacion_consumo(self):
+    def missing_generacion_consumo(self, dates_list):
         """
         Checks if there is data missing from *Generación y consumo* in the set 
         range of dates and return the dates missing.
         
         Parameters:
         -----------
-        self.dates_list: list.
+        dates_list: list.
             List of dates were data has been scraped.
         self.missing_files_generacion_consumo: list.
             List of dates were data is missing.
@@ -328,7 +331,7 @@ class FileUtils(object):
         file_dates = self.get_file_dates(filenames=filenames)
 
         # Find missing dates to scrape again
-        for date_element in self.dates_list:
+        for date_element in dates_list:
             if date_element not in file_dates:
                 date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
                 print(f"Missing data for {date.strftime('%Y-%m-%d')}")

@@ -100,6 +100,15 @@ class ElectricityScraper:
 
         # Initiate the method to perform the hour selection in the *Mercados y precios* page
         mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
+        
+        # Find missing files by looking in the directory
+        files = os.listdir("data")        
+        if files:
+            # Initialize data_saver with empty values since we will not use them at this point
+            # The data_saver will be initialized again later to save data. Here we only want
+            # to find if there are missing files
+            data_saver = FileUtils(filename='',dictionary={}) 
+            data_saver.missing_mercados_precios(dates_list=self.dates_list)
 
         # Navigates through the defined date range
         for date in self.dates_list:
@@ -119,19 +128,23 @@ class ElectricityScraper:
             market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
 
             # Save the data to a CSV file for each day
-            data_saver = FileUtils(filename=f'energy_prices_{date}.csv',dictionary=market_price)
+            data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
             data_saver.save_data()
             
-        # Check if there is missing files in the data folder
-        data_saver.missing_mercados_precios()
+        # Check if there are missing files in the data folder
+        data_saver.missing_mercados_precios(date_list=self.dates_list)
             
         # While data_saver.missing_files_mercados_precios is not empty list
         # Run the scraper again on the dates inside missing_files_mercados_precios
         # and save the data to a CSV file for each day
         while data_saver.missing_files_mercados_precios:
             for date in data_saver.missing_files_mercados_precios:
-                date = f"{year}-{month}-{day}"
                 print(f"Processing date: {date}")
+                
+                # Get the year, month and day. Pass it to the date navigator
+                year = date.split("-")[0]
+                month = date.split("-")[1]
+                day = date.split("-")[2]
                 
                 mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
                 time.sleep(5)
@@ -160,9 +173,15 @@ class ElectricityScraper:
         # Initiate the method to perform the hour selection in the *Generación y consumo* page
         generacion_consumo_navigator = NavigationGeneracionConsumo(driver=self.driver)
 
-        # Create list with all files in the save directory
-        files = os.listdir("data")
-
+        # Find missing files by looking in the directory
+        files = os.listdir("data")        
+        if files:
+            # Initialize data_saver with empty values since we will not use them at this point
+            # The data_saver will be initialized again later to save data. Here we only want
+            # to find if there are missing files
+            data_saver = FileUtils(filename='', dictionary={}) 
+            data_saver.missing_generacion_consumo(date_list=self.dates_list)
+        
         # Navigates through the defined date range
         for date in self.dates_list:
             print(f"Processing date: {date}")
@@ -203,6 +222,13 @@ class ElectricityScraper:
             # and save the data to a CSV file for each day
             while data_saver.missing_files_generacion_consumo:
                 for date in data_saver.missing_files_generacion_consumo:
+                    print(f"Processing date: {date}")
+                    
+                    # Get the year, month and day. Pass it to the date navigator
+                    year = date.split("-")[0]
+                    month = date.split("-")[1]
+                    day = date.split("-")[2]
+                    
                     generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
                     time.sleep(5)
                     print(self.driver.current_url) # For debugging the correct URL
@@ -233,7 +259,8 @@ class ElectricityScraper:
 if __name__ == "__main__":
     # Set the period of time to scrape
     start_date = "2020-11-01"
-    end_date = "2022-10-31"
+    # end_date = "2022-10-31"
+    end_date = "2020-11-02"
     
     electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
     electricity_scraper.mercado_precios_scraper()
