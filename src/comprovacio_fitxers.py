@@ -5,21 +5,21 @@ import re
 
 # Create list with all files in the save directory
 path = "/home/albert/Desktop/Tipologia i cicle de vida de les dades/PRA1/"
-full_path = os.path.join(path, 'data', 'already_merged', 'mercados_precios')
+full_path = os.path.join(path, "data", "already_merged", "mercados_precios")
 files = os.listdir(full_path)
 
 # get the dates from the filenames in the full path folder
 dates = []
 for file in files:
-    date = re.findall(r'\d{1,2}-\d{1,2}-\d{4}', file)
+    date = re.findall(r"\d{1,2}-\d{1,2}-\d{4}", file)
 
     # split date in day-month-year
-    day, month, year = date[0].split('-')
+    day, month, year = date[0].split("-")
     # add zero to the left of day and month if the length is not 2
     if len(day) == 1:
-        day = '0' + day
+        day = "0" + day
     if len(month) == 1:
-        month = '0' + month
+        month = "0" + month
     # create date string
     date = day + "-" + month + "-" + year
     dates.append(date)
