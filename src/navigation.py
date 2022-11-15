@@ -162,7 +162,7 @@ class NavigationMercadosPrecios(BasePage):
 
             # Hides and unhides the hour selector to prevent and issue during changing hours were the class is kept as 'not hidden' 
             # and prevents the selection of the right hour
-            if select_hour_tooltip_child.get_attribute("class") == "time-selector-tooltip": # list_index > 0 and 
+            if select_hour_tooltip_child.get_attribute("class") == "time-selector-tooltip":
                 try:
                     select_hour_tooltip.click()
                     select_hour_tooltip.click()
@@ -290,7 +290,7 @@ class NavigationGeneracionConsumo(BasePage):
         """
         Navigates to each date from a selected range that is provided.
 
-        Paràmeters:
+        Parameters:
         ----------
         year: int.
                 The year to navigate to.
@@ -353,7 +353,7 @@ class NavigationGeneracionConsumo(BasePage):
             # Hides and unhides the hour selector to prevent and issue during
             # changing hours were the class is kept as 'not hidden' and prevents
             # the selection of the right hour
-            if list_index > 0 and select_hour_tooltip_child.get_attribute("class") == "time-selector-tooltip":
+            if select_hour_tooltip_child.get_attribute("class") == "time-selector-tooltip":
                 try:
                     select_hour_tooltip.click()
                     select_hour_tooltip.click()
@@ -461,6 +461,7 @@ class NavigationGeneracionConsumo(BasePage):
                 else:
                     print(f"Unable to find the right hour to be selected. Attempt {self.hour_selection_attempts}")
                     return self.hour_selection_generacion_libre_co2(list_index)
+        
         # Handle TimeoutException and run the function again
         except TimeoutException as timeout:
             print(timeout)

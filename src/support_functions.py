@@ -286,8 +286,8 @@ class FileUtils(object):
         # Find missing dates to scrape again
         for date_element in self.dates_list:
             if date_element not in file_dates:
-                date = datetime.datetime.strptime(date_element, "%d-%m-%Y")
-                print(f"Missing data for {date.strftime('%d-%m-%Y')}")
+                date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
+                print(f"Missing data for {date.strftime('%Y-%m-%d')}")
                 self.missing_files_mercados_precios.append(date)
         
         self.missing_files_mercados_precios = [(date.year, date.month, date.day) for date in reversed(self.missing_files_mercados_precios)]
@@ -330,8 +330,8 @@ class FileUtils(object):
         # Find missing dates to scrape again
         for date_element in self.dates_list:
             if date_element not in file_dates:
-                date = datetime.datetime.strptime(date_element, "%d-%m-%Y")
-                print(f"Missing data for {date.strftime('%d-%m-%Y')}")
+                date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
+                print(f"Missing data for {date.strftime('%Y-%m-%d')}")
                 self.missing_files_generacion_consumo.append(date)
         
         self.missing_files_generacion_consumo = [(date.year, date.month, date.day) for date in reversed(self.missing_files_generacion_consumo)]
