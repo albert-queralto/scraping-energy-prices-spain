@@ -90,9 +90,9 @@ class ElectricityScraper(unittest.TestCase):
         self.base_url = 'https://www.esios.ree.es/es' # Base URL that we want to scrape
         
         # Set days before the actual day to scrape and create a list of dates and transform them to tuples
-        # self.num_previous_days = 200
-        # self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
-        # self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
+        self.num_previous_days = 700
+        self.date_range = [datetime.datetime.today() - datetime.timedelta(days=day) for day in range(self.num_previous_days)]
+        self.date_range = [(date.year, date.month, date.day) for date in reversed(self.date_range)]
                 
     # @ordered_unittests
     # def test_mercado_precios_scraper(self):
@@ -147,7 +147,7 @@ class ElectricityScraper(unittest.TestCase):
         generacion_consumo_navigator =  NavigationGeneracionConsumo(driver=self.driver)
         
         # Create list with all files in the save directory
-        path = "/home/albert/Desktop/Tipologia i cicle de vida de les dades/PRA1/"
+        path = "./"
         full_path = os.path.join(path, 'data')
         files = os.listdir(full_path)
         
