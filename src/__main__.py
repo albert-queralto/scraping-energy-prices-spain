@@ -235,7 +235,6 @@ if __name__ == "__main__":
     start_date = "2020-11-01"
     end_date = "2022-10-31"
     
-    
     electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
     electricity_scraper.mercado_precios_scraper()
     electricity_scraper.generacion_consumo_scraper()
