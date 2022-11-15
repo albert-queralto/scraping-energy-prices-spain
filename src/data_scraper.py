@@ -36,15 +36,30 @@ class MercadoPreciosData(object):
         """
         pm_total = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_TOTAL)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.PRECIO_MEDIO_TOTAL
+                )
+            )
+            .text
         )
         pm_com_libre = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_COM_LIBRE)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.PRECIO_MEDIO_COM_LIBRE
+                )
+            )
+            .text
         )
         pm_com_ref = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.PRECIO_MEDIO_COM_REF)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.PRECIO_MEDIO_COM_REF
+                )
+            )
+            .text
         )
         return pm_total, pm_com_libre, pm_com_ref
 
@@ -69,15 +84,30 @@ class MercadoPreciosData(object):
         """
         energia_total = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_TOTAL)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.ENERGIA_TOTAL
+                )
+            )
+            .text
         )
         energia_com_libre = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_COM_LIBRE)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.ENERGIA_COM_LIBRE
+                )
+            )
+            .text
         )
         energia_com_ref = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.ENERGIA_COM_REF)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.ENERGIA_COM_REF
+                )
+            )
+            .text
         )
         return energia_total, energia_com_libre, energia_com_ref
 
@@ -101,11 +131,21 @@ class MercadoPreciosData(object):
         """
         cuota_com_libre = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.CUOTA_COM_LIBRE)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.CUOTA_COM_LIBRE
+                )
+            )
+            .text
         )
         cuota_com_ref = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(MercadosPreciosPointers.CUOTA_COM_REF)).text
+            .until(
+                EC.presence_of_element_located(
+                    MercadosPreciosPointers.CUOTA_COM_REF
+                )
+            )
+            .text
         )
         return cuota_com_libre, cuota_com_ref
 
@@ -143,34 +183,74 @@ class GeneracionConsumoData(object):
         """
         percentage_renewable = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.PERC_RENEW_GEN)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.PERC_RENEW_GEN
+                )
+            )
+            .text
         )
         renewable_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.RENEW_GEN_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.RENEW_GEN_MW
+                )
+            )
+            .text
         )
         wind_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.WIND_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.WIND_MW
+                )
+            )
+            .text
         )
         water_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.WATER_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.WATER_MW
+                )
+            )
+            .text
         )
         solar_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.SOLAR_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.SOLAR_MW
+                )
+            )
+            .text
         )
         nuclear_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.NUCLEAR_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.NUCLEAR_MW
+                )
+            )
+            .text
         )
         thermo_renewable_power = (
             WebDriverWait(self.driver, 20)
-            .until(EC.presence_of_element_located(GeneracionConsumoPointers.THERMO_RENEW_MW)).text
+            .until(
+                EC.presence_of_element_located(
+                    GeneracionConsumoPointers.THERMO_RENEW_MW
+                )
+            )
+            .text
         )
 
         return (
-            percentage_renewable, renewable_power, wind_power, water_power,
-            solar_power, nuclear_power, thermo_renewable_power,
+            percentage_renewable,
+            renewable_power,
+            wind_power,
+            water_power,
+            solar_power,
+            nuclear_power,
+            thermo_renewable_power,
         )
