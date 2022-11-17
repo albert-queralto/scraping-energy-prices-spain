@@ -7,7 +7,6 @@ import pandas as pd
 # Create list with all files in the save directory
 path = "/home/albert/Desktop/Tipologia i cicle de vida de les dades/PRA1/"
 full_path = os.path.join(path, 'data')
-files = os.listdir(full_path)
 
 for file in files:
     if file.endswith('.csv') and "renewable_generation" in file:

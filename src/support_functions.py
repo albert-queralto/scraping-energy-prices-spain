@@ -21,8 +21,9 @@ from data_scraper import *
 
 class ExtendedActions(ActionChains):
     """
-    Extends the functionality of the ActionChains method from the Selenium WebDriver.
-    Source: https://stackoverflow.com/questions/53467739/how-to-implement-method-chaining-of-selenium-multiple-webdriverwait-in-python
+    Extends the functionality of the ActionChains method from the Selenium
+    WebDriver. Source:
+    https://stackoverflow.com/questions/53467739/how-to-implement-method-chaining-of-selenium-multiple-webdriverwait-in-python
     """
 
     def wait(self, second, condition):
@@ -33,7 +34,8 @@ class ExtendedActions(ActionChains):
 
 class WrapperMercadoPrecios(object):
     """
-    Contains methods with the program logic and other utilities to scrape the *Mercado y precios* website.
+    Contains methods with the program logic and other utilities to scrape the
+    *Mercado y precios* website.
     """
 
     def __init__(self, date, max_hour, mercado_precio_nav, driver):
@@ -43,9 +45,16 @@ class WrapperMercadoPrecios(object):
         self.driver = driver
 
         self.market_price = {
-            "date": [], "hour": [], "avg total price (euro/MWh)": [], "avg price free market (euro/MWh)": [],
-            "avg price reference market (euro/MWh)": [], "energy total (MWh)": [], "energy free market (MWh)": [],
-            "energy reference market (MWh)": [], "free market share (%)": [], "reference market share (%)": []
+            "date": [],
+            "hour": [],
+            "avg total price (euro/MWh)": [],
+            "avg price free market (euro/MWh)": [],
+            "avg price reference market (euro/MWh)": [],
+            "energy total (MWh)": [],
+            "energy free market (MWh)": [],
+            "energy reference market (MWh)": [],
+            "free market share (%)": [],
+            "reference market share (%)": [],
         }
 
     def hour_iterator_mercado_precios(self) -> dict:
@@ -65,20 +74,35 @@ class WrapperMercadoPrecios(object):
             The data of market prices.
         """
 
-        # Iterate through the hour elements and select the right hour from the drop down menu list
+        # Iterate through the hour elements and select the right hour from the
+        # drop down menu list
         for i in range(self.max_hour):
-            self.mercado_precio_nav.hour_selection_mercados_precios(list_index=i)
+            self.mercado_precio_nav.hour_selection_mercados_precios(
+                list_index=i
+            )
 
-            # If returned value of self.mercado_precio_nav.hour_selection_mercados_precios() is False
-            # Then, the amount of attempts for that hour has been exceeded indicating that the hour
-            # is not available and will be skipped
-            if self.mercado_precio_nav.hour_selection_mercados_precios(list_index=i) is False:
+            # If returned value of
+            # self.mercado_precio_nav.hour_selection_mercados_precios() is False
+            # Then, the amount of attempts for that hour has been exceeded
+            # indicating that the hour is not available and will be skipped
+            if (
+                self.mercado_precio_nav.hour_selection_mercados_precios(
+                    list_index=i
+                )
+                is False
+            ):
                 # Append empty data to dictionary
                 self.market_price["date"].append(self.date)
-                self.market_price["hour"].append(f"{'0' if i < 10 else ''}{i}:00")
+                self.market_price["hour"].append(
+                    f"{'0' if i < 10 else ''}{i}:00"
+                )
                 self.market_price["avg total price (euro/MWh)"].append("-")
-                self.market_price["avg price free market (euro/MWh)"].append("-")
-                self.market_price["avg price reference market (euro/MWh)"].append("-")
+                self.market_price["avg price free market (euro/MWh)"].append(
+                    "-"
+                )
+                self.market_price[
+                    "avg price reference market (euro/MWh)"
+                ].append("-")
                 self.market_price["energy total (MWh)"].append("-")
                 self.market_price["energy free market (MWh)"].append("-")
                 self.market_price["energy reference market (MWh)"].append("-")
@@ -86,32 +110,56 @@ class WrapperMercadoPrecios(object):
                 self.market_price["reference market share (%)"].append("-")
                 continue
             else:
-                # If the hour is found, scrape the data                    
+                # If the hour is found, scrape the data
                 mercado_precio = MercadoPreciosData(driver=self.driver)
                 time.sleep(5)
 
-                # Get the information of prices, energy and shares from *Mercado y precios* page
-                pm_total, pm_com_libre, pm_com_ref = mercado_precio.get_precio_final_energia()
-                energia_total, energia_com_libre, energia_com_ref = mercado_precio.get_energia()
+                # Get the information of prices, energy and shares from *Mercado
+                # y precios* page
+                (
+                    pm_total,
+                    pm_com_libre,
+                    pm_com_ref,
+                ) = mercado_precio.get_precio_final_energia()
+                (
+                    energia_total,
+                    energia_com_libre,
+                    energia_com_ref,
+                ) = mercado_precio.get_energia()
                 cuota_com_libre, cuota_com_ref = mercado_precio.get_cuota()
 
                 # Append data to dictionary
                 self.market_price["date"].append(self.date)
-                self.market_price["hour"].append(f"{'0' if i < 10 else ''}{i}:00")
+                self.market_price["hour"].append(
+                    f"{'0' if i < 10 else ''}{i}:00"
+                )
                 self.market_price["avg total price (euro/MWh)"].append(pm_total)
-                self.market_price["avg price free market (euro/MWh)"].append(pm_com_libre)
-                self.market_price["avg price reference market (euro/MWh)"].append(pm_com_ref)
+                self.market_price["avg price free market (euro/MWh)"].append(
+                    pm_com_libre
+                )
+                self.market_price[
+                    "avg price reference market (euro/MWh)"
+                ].append(pm_com_ref)
                 self.market_price["energy total (MWh)"].append(energia_total)
-                self.market_price["energy free market (MWh)"].append(energia_com_libre)
-                self.market_price["energy reference market (MWh)"].append(energia_com_ref)
-                self.market_price["free market share (%)"].append(cuota_com_libre)
-                self.market_price["reference market share (%)"].append(cuota_com_ref)
+                self.market_price["energy free market (MWh)"].append(
+                    energia_com_libre
+                )
+                self.market_price["energy reference market (MWh)"].append(
+                    energia_com_ref
+                )
+                self.market_price["free market share (%)"].append(
+                    cuota_com_libre
+                )
+                self.market_price["reference market share (%)"].append(
+                    cuota_com_ref
+                )
         return self.market_price
 
 
 class WrapperGeneracionConsumo(object):
     """
-    Contains methods with the program logic and other utilities to scrape the *Generación y consumo* website.
+    Contains methods with the program logic and other utilities to scrape the
+    *Generación y consumo* website.
     """
 
     def __init__(self, date, max_hour, generacion_consumo_nav, driver):
@@ -121,9 +169,15 @@ class WrapperGeneracionConsumo(object):
         self.driver = driver
 
         self.renewable_data = {
-            "date": [], "hour": [], "renewable generation (%)": [], "renewable generation (MW)": [],
-            "wind generation (MW)": [], "water generation (MW)": [], "solar generation (MW)": [],
-            "nuclear generation (MW)": [], "thermorenewable generation (MW)": []
+            "date": [],
+            "hour": [],
+            "renewable generation (%)": [],
+            "renewable generation (MW)": [],
+            "wind generation (MW)": [],
+            "water generation (MW)": [],
+            "solar generation (MW)": [],
+            "nuclear generation (MW)": [],
+            "thermorenewable generation (MW)": [],
         }
 
     def hour_iterator_generacion_libre_co2(self) -> pd.DataFrame():
@@ -146,44 +200,76 @@ class WrapperGeneracionConsumo(object):
         # Iterate through the hour elements and select the right hour from the
         # drop down menu list
         for i in range(self.max_hour):
-            self.generacion_consumo_nav.hour_selection_generacion_libre_co2(list_index=i)
-            
-            # If returned value of self.generacion_consumo_nav.hour_selection_generacion_libre_co2() is False
-            # Then, the amount of attempts for that hour has been exceeded indicating that the hour
-            # is not available and will be skipped
-            if self.generacion_consumo_nav.hour_selection_generacion_libre_co2(list_index=i) is False:
+            self.generacion_consumo_nav.hour_selection_generacion_libre_co2(
+                list_index=i
+            )
+
+            # If returned value of
+            # self.generacion_consumo_nav.hour_selection_generacion_libre_co2()
+            # is False Then, the amount of attempts for that hour has been
+            # exceeded indicating that the hour is not available and will be
+            # skipped
+            if (
+                self.generacion_consumo_nav.hour_selection_generacion_libre_co2(
+                    list_index=i
+                )
+                is False
+            ):
                 # Append empty data to dictionary
                 self.renewable_data["date"].append(self.date)
-                self.renewable_data["hour"].append(f"{'0' if i < 10 else ''}{i}:00")
+                self.renewable_data["hour"].append(
+                    f"{'0' if i < 10 else ''}{i}:00"
+                )
                 self.renewable_data["renewable generation (%)"].append("-")
                 self.renewable_data["renewable generation (MW)"].append("-")
                 self.renewable_data["wind generation (MW)"].append("-")
                 self.renewable_data["water generation (MW)"].append("-")
                 self.renewable_data["solar generation (MW)"].append("-")
                 self.renewable_data["nuclear generation (MW)"].append("-")
-                self.renewable_data["thermorenewable generation (MW)"].append("-")
+                self.renewable_data["thermorenewable generation (MW)"].append(
+                    "-"
+                )
                 continue
             else:
                 # If the hour is found, scrape the data
                 generacion_consumo = GeneracionConsumoData(driver=self.driver)
                 time.sleep(5)
 
-                # Get the information of prices, energy and shares from *Generación y consumo* page
-                percentage_renewable, renewable_power, wind_power, water_power, solar_power, nuclear_power, thermo_renewable_power = \
-                                                                                            generacion_consumo.get_renewable_generation_data()
+                # Get the information of prices, energy and shares from
+                # *Generación y consumo* page
+                (
+                    percentage_renewable,
+                    renewable_power,
+                    wind_power,
+                    water_power,
+                    solar_power,
+                    nuclear_power,
+                    thermo_renewable_power,
+                ) = generacion_consumo.get_renewable_generation_data()
 
                 # Append data to dictionary
                 self.renewable_data["date"].append(self.date)
-                self.renewable_data["hour"].append(f"{'0' if i < 10 else ''}{i}:00")
-                self.renewable_data["renewable generation (%)"].append(percentage_renewable)
-                self.renewable_data["renewable generation (MW)"].append(renewable_power)
+                self.renewable_data["hour"].append(
+                    f"{'0' if i < 10 else ''}{i}:00"
+                )
+                self.renewable_data["renewable generation (%)"].append(
+                    percentage_renewable
+                )
+                self.renewable_data["renewable generation (MW)"].append(
+                    renewable_power
+                )
                 self.renewable_data["wind generation (MW)"].append(wind_power)
                 self.renewable_data["water generation (MW)"].append(water_power)
                 self.renewable_data["solar generation (MW)"].append(solar_power)
-                self.renewable_data["nuclear generation (MW)"].append(nuclear_power)
-                self.renewable_data["thermorenewable generation (MW)"].append(thermo_renewable_power)
+                self.renewable_data["nuclear generation (MW)"].append(
+                    nuclear_power
+                )
+                self.renewable_data["thermorenewable generation (MW)"].append(
+                    thermo_renewable_power
+                )
         renewable_data_df = pd.DataFrame(self.renewable_data)
         return renewable_data_df
+
 
 class FileUtils(object):
     def __init__(self, filename, dictionary) -> None:
@@ -211,17 +297,16 @@ class FileUtils(object):
             print(f"Error saving data to {self.filename}: {e}")
             print("Trying again...")
             self.save_data()
-            
-            
+
     def empty_files(self, filenames):
         """
         Method that finds if scrape data has not been saved properly.
         If so, deletes the file so that these dates can be scraped again.
-        
+
         Empty files only contain headers but no other data. Their size
         is smaller than 500 bytes.
         """
-        
+
         for file in filenames:
             file = os.path.join("data", file)
             if os.path.getsize(file) < 500:
@@ -233,11 +318,10 @@ class FileUtils(object):
                     print("Trying again...")
                     self.empty_files(filenames)
 
-            
     def get_file_dates(self, filenames):
         """
         Method that gets the dates of the files in the data folder.
-        
+
         Returns:
         --------
         file_dates: list.
@@ -245,19 +329,18 @@ class FileUtils(object):
         """
         file_dates = []
         for file in filenames:
-            date = re.findall(r'\d{4}-\d{1,2}-\d{1,2}', file)
-            
+            date = re.findall(r"\d{4}-\d{1,2}-\d{1,2}", file)
+
             # Get the date of the file and append it to the list
             if len(date) > 0:
                 file_dates.append(date[0])
         return file_dates
-            
-            
+
     def missing_mercados_precios(self, dates_list):
         """
-        Checks if there is data missing from *Mercados y precios* in the set 
+        Checks if there is data missing from *Mercados y precios* in the set
         range of dates and return the dates missing.
-        
+
         Parameters:
         -----------
         dates_list: list.
@@ -268,21 +351,26 @@ class FileUtils(object):
             Method that deletes empty files.
         self.get_file_dates: method.
             Method that gets the dates of the files in the data folder.
-            
+
         Returns:
         --------
         self.missing_files_mercados_precios: list.
             List of dates that are missing from the data folder.
         """
-        
+
         # Get all filenames with .csv extension in data folder and that
         # do not have "renewable_generation" in the name (i.e. files
         # containing only data from *Mercados y precios*)
-        filenames = [filename for filename in os.listdir("data") if filename.endswith(".csv") and "renewable_generation" not in filename]
-        
+        filenames = [
+            filename
+            for filename in os.listdir("data")
+            if filename.endswith(".csv")
+            and "renewable_generation" not in filename
+        ]
+
         # Check if there are empty files and delete them
         self.empty_files(filenames=filenames)
-        
+
         # Get the dates of the remaining files
         file_dates = self.get_file_dates(filenames=filenames)
 
@@ -292,16 +380,16 @@ class FileUtils(object):
                 date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
                 date = date.strftime("%Y-%m-%d")
                 self.missing_files_mercados_precios.append(date)
-        
+
         print(f"Missing data of *Mercados y precios* for {self.missing_files_mercados_precios}")
         print(f"Missing files for *Mercados y Precios*: {len(self.missing_files_mercados_precios)}")
         
-        
+    
     def missing_generacion_consumo(self, dates_list):
         """
-        Checks if there is data missing from *Generación y consumo* in the set 
+        Checks if there is data missing from *Generación y consumo* in the set
         range of dates and return the dates missing.
-        
+
         Parameters:
         -----------
         dates_list: list.
@@ -312,21 +400,25 @@ class FileUtils(object):
             Method that deletes empty files.
         self.get_file_dates: method.
             Method that gets the dates of the files in the data folder.
-            
+
         Returns:
         --------
         self.missing_files_generacion_consumo: list.
             List of dates that are missing from the data folder.
         """
-        
+
         # Get all filenames with .csv extension in data folder and that
         # have "renewable_generation" in the name (i.e. files
         # containing only data from *Generación y consumo*)
-        filenames = [filename for filename in os.listdir("data") if filename.endswith(".csv") and "renewable_generation" in filename]
-        
+        filenames = [
+            filename
+            for filename in os.listdir("data")
+            if filename.endswith(".csv") and "renewable_generation" in filename
+        ]
+
         # Check if there are empty files and delete them
         self.empty_files(filenames=filenames)
-        
+
         # Get the dates of the remaining files
         file_dates = self.get_file_dates(filenames=filenames)
 
