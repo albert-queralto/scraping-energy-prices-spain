@@ -18,9 +18,7 @@ obtain additional information of those tests.
 import datetime
 import pandas as pd
 import random
-import sys
 import time
-import re
 
 # Webscraping libraries
 from selenium.webdriver import Chrome
@@ -89,11 +87,13 @@ class ElectricityScraper:
         ).date()
         self.end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
         self.delta = datetime.timedelta(days=1)
-        self.dates_list = []
-
+        self.dates_list_init = []
+        
         while self.start_date <= self.end_date:
-            self.dates_list.append(self.start_date.strftime("%Y-%m-%d"))
+            self.dates_list_init.append(self.start_date.strftime("%Y-%m-%d"))
             self.start_date += self.delta
+            
+        self.dates_list = self.dates_list_init # The date_list variable will be overwritten depending on the presence of missing files
 
     def mercado_precios_scraper(self):
         """
@@ -112,18 +112,22 @@ class ElectricityScraper:
         page_navigator.navigate_mercados_precios()
         time.sleep(1)
 
-        # Initiate the method to perform the hour selection in the *Mercados y
-        # precios* page
-        mercado_precio_navigator = NavigationMercadosPrecios(driver=self.driver)
+        # Initiate the method to perform the hour selection in the *Mercados y precios* page
+        mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
+        
+        # Find missing files by looking in the directory.
+        # If there are missing files, the date list is replaced with the list of missing dates
+        files = os.listdir("data")        
 
-        # Find missing files by looking in the directory
-        files = os.listdir("data")
         if files:
             # Initialize data_saver with empty values since we will not use them
             # at this point The data_saver will be initialized again later to
             # save data. Here we only want to find if there are missing files
             data_saver = FileUtils(filename="", dictionary={})
             data_saver.missing_mercados_precios(dates_list=self.dates_list)
+        if len(data_saver.missing_files_mercados_precios) > 0:
+            print("There are missing files for *Mercados y precios*. Starting the scraper on the missing dates...")
+            self.dates_list = data_saver.missing_files_mercados_precios
 
         # Navigates through the defined date range
         for date in self.dates_list:
@@ -152,19 +156,19 @@ class ElectricityScraper:
                 market_prices_data_iterator.hour_iterator_mercado_precios()
             )
 
-            # Save the data to a CSV file for each day
-            data_saver = FileUtils(
-                filename=f"energy_prices_{date}.csv", dictionary=market_price
-            )
+            # Save the data of *Mercados y precios* to a CSV file for each day
+            data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
             data_saver.save_data()
+            
+        # Check if there are missing files in the data folder after scraping of *Mercados y precios* is completed
+        data_saver.missing_mercados_precios(date_list=self.dates_list_init)
+            
+        # If data_saver.missing_files_mercados_precios is not an empty list
+        # Run the scraper again on the dates inside missing_files_mercados_precios
 
-        # Check if there are missing files in the data folder
-        data_saver.missing_mercados_precios(date_list=self.dates_list)
-
-        # While data_saver.missing_files_mercados_precios is not empty list Run
-        # the scraper again on the dates inside missing_files_mercados_precios
         # and save the data to a CSV file for each day
-        while data_saver.missing_files_mercados_precios:
+        if data_saver.missing_files_mercados_precios:
+            print("There are missing files for *Mercados y precios*. Starting the scraper on the missing dates...")
             for date in data_saver.missing_files_mercados_precios:
                 print(f"Processing date: {date}")
 
@@ -220,11 +224,16 @@ class ElectricityScraper:
         # Find missing files by looking in the directory
         files = os.listdir("data")
         if files:
-            # Initialize data_saver with empty values since we will not use them
-            # at this point The data_saver will be initialized again later to
-            # save data. Here we only want to find if there are missing files
-            data_saver = FileUtils(filename="", dictionary={})
-            data_saver.missing_generacion_consumo(date_list=self.dates_list)
+            # Initialize data_saver with empty values since we will not use them at this point
+            # The data_saver will be initialized again later to save data. Here we only want
+            # to find if there are missing files
+            data_saver = FileUtils(filename='', dictionary={}) 
+            data_saver.missing_generacion_consumo(date_list=self.dates_list_init)
+        if len(data_saver.missing_files_generacion_consumo) > 0:
+            print("There are missing files for *Generación y consumo*. Starting the scraper on the missing dates...")
+            self.dates_list = data_saver.missing_files_generacion_consumo
+        else:
+            self.dates_list = self.dates_list_init
 
         # Navigates through the defined date range
         for date in self.dates_list:
@@ -236,23 +245,16 @@ class ElectricityScraper:
             day = date.split("-")[2]
 
             try:
-                # Check if year, month and day are in the file name and load the
-                # file
+                # Check if date is in the file name and load the file of *Mercados y precios* as pandas dataframe
                 file = [file for file in files if date in file]
                 energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
-                energy_prices.to_csv(
-                    f"data/energy_prices_renewable_generation_{date}.csv",
-                    index=False,
-                )
-            except Exception:
-                print(f"{Exception}\nThis is the first run.")
-                pass
+            except Exception as e:
+                print(f"{e}")
+                continue
 
-            # Initiate method to get the data from the *Generación y consumo*
-            # page
-            generacion_consumo_navigator.date_navigator(
-                year=year, month=month, day=day
-            )
+            # Initiate method to get the data from the *Generación y consumo* page and start the scraping process
+            generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
+
             time.sleep(5)
             print(self.driver.current_url)  # For debugging the correct URL
 
@@ -267,27 +269,25 @@ class ElectricityScraper:
             )
 
             try:
-                energy_prices = pd.merge(
-                    energy_prices, renewable_data_df, on=["date", "hour"]
-                )
+                # Merge both dataframes and save the data to a CSV file for each day
+                energy_prices = pd.merge(energy_prices, renewable_data_df, on=["date", "hour"])
+                energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
+                
+            except Exception as e:
+                print(f"{e}")
+                print("Retrying to save the file again.")
+                renewable_data_df.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
+                continue
+            
+            # Check if there are missing files in the data folder after scraping of *Mercados y precios* is completed
+            data_saver.missing_generacion_consumo(date_list=self.dates_list_init)
+            
+            # If data_saver.missing_files_generacion_consumo is not empty list
+            # Run the scraper again on the dates inside missing_files_generacion_consumo
+            # and save the data to a CSV file for each day
+            if data_saver.missing_files_generacion_consumo:
+                print("There are missing files for *Generación y consumo*. Starting the scraper on the missing dates...")
 
-                # Save the data to a CSV file for each day
-                energy_prices.to_csv(
-                    f"data/energy_prices_renewable_generation_{date}.csv",
-                    index=False,
-                )
-            except:
-                print(f"{Exception}\nWritting first CSV..")
-                renewable_data_df.to_csv(
-                    f"data/energy_prices_renewable_generation_{date}.csv",
-                    index=False,
-                )
-
-            # While data_saver.missing_files_generacion_consumo is not empty
-            # list Run the scraper again on the dates inside
-            # missing_files_generacion_consumo and save the data to a CSV file
-            # for each day
-            while data_saver.missing_files_generacion_consumo:
                 for date in data_saver.missing_files_generacion_consumo:
                     print(f"Processing date: {date}")
 
@@ -315,23 +315,17 @@ class ElectricityScraper:
                     )
 
                     try:
-                        energy_prices = pd.merge(
-                            energy_prices,
-                            renewable_data_df,
-                            on=["date", "hour"],
-                        )
+                        energy_prices = pd.merge(energy_prices, renewable_data_df, on=["date", "hour"])
+                        energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv", index=False)
+                    except Exception as e:
+                        print(f"{e}")
+                        renewable_data_df.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
+                        continue
+        
+        # Merge all the files in the data folder, create the categorical column and save the data to a CSV file
+        data_saver.file_merger()
+        data_saver.create_categorical_column()
 
-                        # Save the data to a CSV file for each day
-                        energy_prices.to_csv(
-                            f"data/energy_prices_renewable_generation_{date}.csv",
-                            index=False,
-                        )
-                    except:
-                        print(f"{Exception}\nWritting first CSV..")
-                        renewable_data_df.to_csv(
-                            f"data/energy_prices_renewable_generation_{date}.csv",
-                            index=False,
-                        )
 
     def CloseDriver(self):
         """

@@ -378,15 +378,13 @@ class FileUtils(object):
         for date_element in dates_list:
             if date_element not in file_dates:
                 date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
-                print(f"Missing data for {date.strftime('%Y-%m-%d')}")
+                date = date.strftime("%Y-%m-%d")
                 self.missing_files_mercados_precios.append(date)
 
-        self.missing_files_mercados_precios = [
-            (date.year, date.month, date.day)
-            for date in reversed(self.missing_files_mercados_precios)
-        ]
-        print(f"Missing files: {len(self.missing_files_mercados_precios)}")
-
+        print(f"Missing data of *Mercados y precios* for {self.missing_files_mercados_precios}")
+        print(f"Missing files for *Mercados y Precios*: {len(self.missing_files_mercados_precios)}")
+        
+    
     def missing_generacion_consumo(self, dates_list):
         """
         Checks if there is data missing from *Generación y consumo* in the set
@@ -428,11 +426,63 @@ class FileUtils(object):
         for date_element in dates_list:
             if date_element not in file_dates:
                 date = datetime.datetime.strptime(date_element, "%Y-%m-%d")
-                print(f"Missing data for {date.strftime('%Y-%m-%d')}")
+                date = date.strftime("%Y-%m-%d")
                 self.missing_files_generacion_consumo.append(date)
+        
+        print(f"Missing data of *Generación y consumo* for {self.missing_files_generacion_consumo}")
+        print(f"Missing files for *Generación y Consumo*: {len(self.missing_files_generacion_consumo)}")
+    
+    
+    def file_merger(self):
+        """
+        Method that gets all the saved files that contain data from *Mercados y precios*, as well as
+        *Generación y consumo* and combines them into a single .csv file that will form the complete dataset.
+        """
+        
+        # Get all filenames with .csv extension in data folder
+        filenames = [filename for filename in os.listdir("data") if filename.endswith(".csv") and "renewable_generation" in filename]
+        
+        # Create a list of dataframes from the files
+        dfs = [pd.read_csv(os.path.join("data", filename), sep=";") for filename in filenames]
+        
+        # Concatenate all dataframes by rows into one
+        df = pd.concat(dfs, ignore_index=True, axis=0)
+        
+        # Save the final dataframe to a .csv file
+        df.to_csv("data/dataset.csv", sep=";", index=False)
+        print("Data has been merged and saved to data/dataset.csv")
+        
+    
+    def create_categorical_column(self):
+        """
+        Method that transforms the dataset by creating a categorical column from the renewable 
+        energy column names (energy_source) and another column with the values.
+        
+        Saves the newly generated dataframe to a new csv file.
+        """
 
-        self.missing_files_generacion_consumo = [
-            (date.year, date.month, date.day)
-            for date in reversed(self.missing_files_generacion_consumo)
-        ]
-        print(f"Missing files: {len(self.missing_files_generacion_consumo)}")
+        df = pd.read_csv("data/dataset.csv", sep=";")
+        
+        dataset_dict = {
+            'date': [], 'hour': [], 'avg total price (euro/MWh)': [], 'avg price free market (euro/MWh)': [], 'avg price reference market (euro/MWh)': [], 
+            'energy total (MWh)': [], 'energy free market (MWh)': [], 'energy reference market (MWh)': [], 'free market share (%)': [], 
+            'reference market share (%)': [], 'renewable generation (%)': [], 'energy_source': [], 'renewable generation (MW)': []}
+
+        keep_cols = ['date', 'hour', 'avg total price (euro/MWh)', 'avg price free market (euro/MWh)', 
+                                'avg price reference market (euro/MWh)', 'energy total (MWh)', 'energy free market (MWh)', 
+                                'energy reference market (MWh)', 'free market share (%)', 'reference market share (%)', 'renewable generation (%)']
+
+        # Transform the dataframe to the final shape
+        # Add a new row for each renewable energy source and the corresponding values for each renewable energy column
+        for idx, row in df.iterrows():
+            for col in df.columns:
+                if col in ['renewable generation (MW)','wind generation (MW)', 'water generation (MW)', 
+                            'solar generation (MW)', 'nuclear generation (MW)', 'thermorenewable generation (MW)']:
+                    for keep_col in keep_cols:
+                        dataset_dict[keep_col].append(row[keep_col])
+                    dataset_dict['energy_source'].append(col)
+                    dataset_dict['renewable generation (MW)'].append(row[col])
+
+        dataset_dict_df = pd.DataFrame(dataset_dict)
+        dataset_dict_df.to_csv("data/final_dataset.csv", sep=";", index=False)
+        print("Data has been transformed and saved to data/final_dataset.csv")
