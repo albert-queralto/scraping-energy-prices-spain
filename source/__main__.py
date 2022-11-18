@@ -69,8 +69,7 @@ class ElectricityScraper:
         )  # Prevent being identified as a bot with custom User-Agents
         options.add_argument("content-type=application/x-www-form-urlencoded")
 
-        # Initiate the webdriver, installs it if not present and implements the
-        # previous options
+        # Initiate the webdriver, installs it if not present and implements the previous options
         self.driver = Chrome(
             service=ChromeService(ChromeDriverManager().install()),
             options=options,
@@ -95,13 +94,13 @@ class ElectricityScraper:
             
         self.dates_list = self.dates_list_init # The date_list variable will be overwritten depending on the presence of missing files
 
+
     def mercado_precios_scraper(self):
         """
         Method that implements the scraper for the *Mercado y precios* page.
         """
 
-        # Initiate the navigation elements for the first page and open the
-        # Chrome session
+        # Initiate the navigation elements for the first page and open the Chrome session
         page_navigator = NavigationMain(
             driver=self.driver, base_url=self.base_url
         )
@@ -197,6 +196,7 @@ class ElectricityScraper:
                     dictionary=market_price,
                 )
                 data_saver.save_data()
+
 
     def generacion_consumo_scraper(self):
         """
@@ -342,7 +342,11 @@ if __name__ == "__main__":
     # end_date = "2022-10-31"
     end_date = "2020-11-03"
     
-    electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
-    electricity_scraper.mercado_precios_scraper()
-    electricity_scraper.generacion_consumo_scraper()
-    electricity_scraper.CloseDriver()
+    try:
+        electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
+        electricity_scraper.mercado_precios_scraper()
+        electricity_scraper.generacion_consumo_scraper()
+        electricity_scraper.CloseDriver()
+    except Exception as e:
+        print(f"{e}")
+        electricity_scraper.CloseDriver()

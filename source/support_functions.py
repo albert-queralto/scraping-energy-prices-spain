@@ -306,12 +306,12 @@ class FileUtils(object):
         Empty files only contain headers but no other data. Their size
         is smaller than 500 bytes.
         """
-
         for file in filenames:
             file = os.path.join("data", file)
+            # Remove files that do not have the right size
             if os.path.getsize(file) < 500:
                 try:
-                    # os.remove(file)
+                    os.remove(file)
                     print(f"File {file} has been deleted because it was empty.")
                 except Exception as e:
                     print(f"Error deleting file {file}: {e}")
@@ -335,6 +335,34 @@ class FileUtils(object):
             if len(date) > 0:
                 file_dates.append(date[0])
         return file_dates
+    
+    def get_file_names(self, generacion_consumo):
+        """
+        Method that gets the names of the files in the data folder
+        depending on if they belong to the *Mercados y precios* or
+        the *Generación y consumo* pages.
+
+        Returns:
+        --------
+        filenames: list.
+            List of names of the files present in the data folder.
+        """
+        if generacion_consumo:
+            filenames = [
+                filename
+                for filename in os.listdir("data")
+                if filename.endswith(".csv")
+                and "renewable_generation" in filename
+            ]
+        else:
+            filenames = [
+                filename
+                for filename in os.listdir("data")
+                if filename.endswith(".csv")
+                and "renewable_generation" not in filename
+            ]
+            
+        return filenames
 
     def missing_mercados_precios(self, dates_list):
         """
@@ -358,20 +386,14 @@ class FileUtils(object):
             List of dates that are missing from the data folder.
         """
 
-        # Get all filenames with .csv extension in data folder and that
-        # do not have "renewable_generation" in the name (i.e. files
-        # containing only data from *Mercados y precios*)
-        filenames = [
-            filename
-            for filename in os.listdir("data")
-            if filename.endswith(".csv")
-            and "renewable_generation" not in filename
-        ]
+        # Get the filenames in the data folder
+        filenames = self.get_file_names(generacion_consumo=False)
 
         # Check if there are empty files and delete them
         self.empty_files(filenames=filenames)
 
         # Get the dates of the remaining files
+        filenames = self.get_file_names(generacion_consumo=False)
         file_dates = self.get_file_dates(filenames=filenames)
 
         # Find missing dates to scrape again
@@ -384,7 +406,6 @@ class FileUtils(object):
         print(f"Missing data of *Mercados y precios* for {self.missing_files_mercados_precios}")
         print(f"Missing files for *Mercados y Precios*: {len(self.missing_files_mercados_precios)}")
         
-    
     def missing_generacion_consumo(self, dates_list):
         """
         Checks if there is data missing from *Generación y consumo* in the set
@@ -407,19 +428,14 @@ class FileUtils(object):
             List of dates that are missing from the data folder.
         """
 
-        # Get all filenames with .csv extension in data folder and that
-        # have "renewable_generation" in the name (i.e. files
-        # containing only data from *Generación y consumo*)
-        filenames = [
-            filename
-            for filename in os.listdir("data")
-            if filename.endswith(".csv") and "renewable_generation" in filename
-        ]
+        # Get the filenames in the data folder
+        filenames = self.get_file_names(generacion_consumo=True)
 
         # Check if there are empty files and delete them
         self.empty_files(filenames=filenames)
 
         # Get the dates of the remaining files
+        filenames = self.get_file_names(generacion_consumo=True)
         file_dates = self.get_file_dates(filenames=filenames)
 
         # Find missing dates to scrape again
