@@ -44,3 +44,6 @@ Queraltó i López**.
 The data extracted from the website is stored in the folder **dataset**. The
 data is stored in a unique *.csv* file and contains hourly data in a range of
 dates from *01-11-2020* to *31-10-2022*.
+
+The dataset has been published in Zenodo and it can be accessed through the
+following link: *https://doi.org/10.5281/zenodo.7335618*
