@@ -7,7 +7,8 @@ class WebDriverOptions(object):
     Class that stores all the variables to setup the WebDriver
     """
 
-    # List of User Agents to loop from in order to avoid being identified as a scraper
+    # List of User Agents to loop from in order to avoid being identified as a
+    # scraper
     user_agents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",

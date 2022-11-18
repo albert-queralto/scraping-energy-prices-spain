@@ -58,21 +58,33 @@ class ElectricityScraper:
         """
         Method that includes all the elements that are required during initialization.
         """
-        
+
         # WebDriver options
-        options = Options() 
-        options.headless = (False)  # Option to show the browser window (True) or not (False)
-        options.add_argument(f"user-agent={random.choice(WebDriverOptions.user_agents)}")  # Prevent being identified as a bot with custom User-Agents
+        options = Options()
+        options.headless = (
+            False  # Option to show the browser window (True) or not (False)
+        )
+        options.add_argument(
+            f"user-agent={random.choice(WebDriverOptions.user_agents)}"
+        )  # Prevent being identified as a bot with custom User-Agents
         options.add_argument("content-type=application/x-www-form-urlencoded")
 
-        # Initiate the webdriver, installs it if not present and implements the previous options
-        self.driver = Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        # Initiate the webdriver, installs it if not present and implements the
+        # previous options
+        self.driver = Chrome(
+            service=ChromeService(ChromeDriverManager().install()),
+            options=options,
+        )
         self.driver.set_page_load_timeout(30)
-        self.base_url = ("https://www.esios.ree.es/es") # Base URL that we want to scrape
-        
+        self.base_url = (
+            "https://www.esios.ree.es/es"  # Base URL that we want to scrape
+        )
+
         # Generate a list with the period of time used to scrape the data
         # transform string dates to datetime and exclude the hour
-        self.start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        self.start_date = datetime.datetime.strptime(
+            start_date, "%Y-%m-%d"
+        ).date()
         self.end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
         self.delta = datetime.timedelta(days=1)
         self.dates_list_init = []
@@ -83,14 +95,16 @@ class ElectricityScraper:
             
         self.dates_list = self.dates_list_init # The date_list variable will be overwritten depending on the presence of missing files
 
-
     def mercado_precios_scraper(self):
         """
         Method that implements the scraper for the *Mercado y precios* page.
         """
 
-        # Initiate the navigation elements for the first page and open the Chrome session
-        page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
+        # Initiate the navigation elements for the first page and open the
+        # Chrome session
+        page_navigator = NavigationMain(
+            driver=self.driver, base_url=self.base_url
+        )
         page_navigator.open_chrome_session()
         time.sleep(1)
 
@@ -104,11 +118,12 @@ class ElectricityScraper:
         # Find missing files by looking in the directory.
         # If there are missing files, the date list is replaced with the list of missing dates
         files = os.listdir("data")        
+
         if files:
-            # Initialize data_saver with empty values since we will not use them at this point
-            # The data_saver will be initialized again later to save data. Here we only want
-            # to find if there are missing files
-            data_saver = FileUtils(filename='',dictionary={}) 
+            # Initialize data_saver with empty values since we will not use them
+            # at this point The data_saver will be initialized again later to
+            # save data. Here we only want to find if there are missing files
+            data_saver = FileUtils(filename="", dictionary={})
             data_saver.missing_mercados_precios(dates_list=self.dates_list)
         if len(data_saver.missing_files_mercados_precios) > 0:
             print("There are missing files for *Mercados y precios*. Starting the scraper on the missing dates...")
@@ -117,19 +132,29 @@ class ElectricityScraper:
         # Navigates through the defined date range
         for date in self.dates_list:
             print(f"Processing date: {date}")
-            
+
             # Get the year, month and day. Pass it to the date navigator
             year = date.split("-")[0]
             month = date.split("-")[1]
             day = date.split("-")[2]
 
-            mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
+            mercado_precio_navigator.date_navigator(
+                year=year, month=month, day=day
+            )
             time.sleep(5)
-            print(self.driver.current_url) # For debugging the correct URL
+            print(self.driver.current_url)  # For debugging the correct URL
 
-            # Wrapper method that contains the functionality to scrape the data from the *Mercados y precios* page
-            market_prices_data_iterator = WrapperMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
-            market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
+            # Wrapper method that contains the functionality to scrape the data
+            # from the *Mercados y precios* page
+            market_prices_data_iterator = WrapperMercadoPrecios(
+                date=date,
+                max_hour=24,
+                mercado_precio_nav=mercado_precio_navigator,
+                driver=self.driver,
+            )
+            market_price = (
+                market_prices_data_iterator.hour_iterator_mercado_precios()
+            )
 
             # Save the data of *Mercados y precios* to a CSV file for each day
             data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
@@ -140,34 +165,49 @@ class ElectricityScraper:
             
         # If data_saver.missing_files_mercados_precios is not an empty list
         # Run the scraper again on the dates inside missing_files_mercados_precios
+
         # and save the data to a CSV file for each day
         if data_saver.missing_files_mercados_precios:
             print("There are missing files for *Mercados y precios*. Starting the scraper on the missing dates...")
             for date in data_saver.missing_files_mercados_precios:
                 print(f"Processing date: {date}")
-                
+
                 # Get the year, month and day. Pass it to the date navigator
                 year = date.split("-")[0]
                 month = date.split("-")[1]
                 day = date.split("-")[2]
-                
-                mercado_precio_navigator.date_navigator(year=year, month=month, day=day)
+
+                mercado_precio_navigator.date_navigator(
+                    year=year, month=month, day=day
+                )
                 time.sleep(5)
                 print(self.driver.current_url)
-                
-                market_prices_data_iterator = WrapperMercadoPrecios(date=date, max_hour=24, mercado_precio_nav=mercado_precio_navigator, driver=self.driver)
-                market_price = market_prices_data_iterator.hour_iterator_mercado_precios()
-                data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
-                data_saver.save_data()
 
+                market_prices_data_iterator = WrapperMercadoPrecios(
+                    date=date,
+                    max_hour=24,
+                    mercado_precio_nav=mercado_precio_navigator,
+                    driver=self.driver,
+                )
+                market_price = (
+                    market_prices_data_iterator.hour_iterator_mercado_precios()
+                )
+                data_saver = FileUtils(
+                    filename=f"energy_prices_{date}.csv",
+                    dictionary=market_price,
+                )
+                data_saver.save_data()
 
     def generacion_consumo_scraper(self):
         """
         Method that implements the scraper for the *Generación y consumo* page.
         """
 
-        # Initiate the navigation elements for the first page and open the Chrome session
-        page_navigator = NavigationMain(driver=self.driver, base_url=self.base_url)
+        # Initiate the navigation elements for the first page and open the
+        # Chrome session
+        page_navigator = NavigationMain(
+            driver=self.driver, base_url=self.base_url
+        )
         page_navigator.open_chrome_session()
         time.sleep(1)
 
@@ -175,11 +215,14 @@ class ElectricityScraper:
         page_navigator.navigate_generacion_consumo()
         time.sleep(1)
 
-        # Initiate the method to perform the hour selection in the *Generación y consumo* page
-        generacion_consumo_navigator = NavigationGeneracionConsumo(driver=self.driver)
+        # Initiate the method to perform the hour selection in the *Generación y
+        # consumo* page
+        generacion_consumo_navigator = NavigationGeneracionConsumo(
+            driver=self.driver
+        )
 
         # Find missing files by looking in the directory
-        files = os.listdir("data")        
+        files = os.listdir("data")
         if files:
             # Initialize data_saver with empty values since we will not use them at this point
             # The data_saver will be initialized again later to save data. Here we only want
@@ -191,11 +234,11 @@ class ElectricityScraper:
             self.dates_list = data_saver.missing_files_generacion_consumo
         else:
             self.dates_list = self.dates_list_init
-        
+
         # Navigates through the defined date range
         for date in self.dates_list:
             print(f"Processing date: {date}")
-            
+
             # Get the year, month and day. Pass it to the date navigator
             year = date.split("-")[0]
             month = date.split("-")[1]
@@ -211,11 +254,19 @@ class ElectricityScraper:
 
             # Initiate method to get the data from the *Generación y consumo* page and start the scraping process
             generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
+
             time.sleep(5)
-            print(self.driver.current_url) # For debugging the correct URL
-            
-            renewable_data_iterator = WrapperGeneracionConsumo(date=date,max_hour=24,generacion_consumo_nav=generacion_consumo_navigator,driver=self.driver)
-            renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
+            print(self.driver.current_url)  # For debugging the correct URL
+
+            renewable_data_iterator = WrapperGeneracionConsumo(
+                date=date,
+                max_hour=24,
+                generacion_consumo_nav=generacion_consumo_navigator,
+                driver=self.driver,
+            )
+            renewable_data_df = (
+                renewable_data_iterator.hour_iterator_generacion_libre_co2()
+            )
 
             try:
                 # Merge both dataframes and save the data to a CSV file for each day
@@ -236,21 +287,32 @@ class ElectricityScraper:
             # and save the data to a CSV file for each day
             if data_saver.missing_files_generacion_consumo:
                 print("There are missing files for *Generación y consumo*. Starting the scraper on the missing dates...")
+
                 for date in data_saver.missing_files_generacion_consumo:
                     print(f"Processing date: {date}")
-                    
+
                     # Get the year, month and day. Pass it to the date navigator
                     year = date.split("-")[0]
                     month = date.split("-")[1]
                     day = date.split("-")[2]
-                    
-                    generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
+
+                    generacion_consumo_navigator.date_navigator(
+                        year=year, month=month, day=day
+                    )
                     time.sleep(5)
-                    print(self.driver.current_url) # For debugging the correct URL
-                    
-                    renewable_data_iterator = WrapperGeneracionConsumo(date=date, max_hour=24, 
-                                        generacion_consumo_nav=generacion_consumo_navigator, driver=self.driver)
-                    renewable_data_df = renewable_data_iterator.hour_iterator_generacion_libre_co2()
+                    print(
+                        self.driver.current_url
+                    )  # For debugging the correct URL
+
+                    renewable_data_iterator = WrapperGeneracionConsumo(
+                        date=date,
+                        max_hour=24,
+                        generacion_consumo_nav=generacion_consumo_navigator,
+                        driver=self.driver,
+                    )
+                    renewable_data_df = (
+                        renewable_data_iterator.hour_iterator_generacion_libre_co2()
+                    )
 
                     try:
                         energy_prices = pd.merge(energy_prices, renewable_data_df, on=["date", "hour"])
@@ -263,7 +325,7 @@ class ElectricityScraper:
         # Merge all the files in the data folder, create the categorical column and save the data to a CSV file
         data_saver.file_merger()
         data_saver.create_categorical_column()
-                
+
 
     def CloseDriver(self):
         """
