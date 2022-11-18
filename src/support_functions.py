@@ -443,7 +443,7 @@ class FileUtils(object):
         filenames = [filename for filename in os.listdir("data") if filename.endswith(".csv") and "renewable_generation" in filename]
         
         # Create a list of dataframes from the files
-        dfs = [pd.read_csv(os.path.join("data", filename), sep=";") for filename in filenames]
+        dfs = [pd.read_csv(os.path.join("data", filename), sep=",") for filename in filenames]
         
         # Concatenate all dataframes by rows into one
         df = pd.concat(dfs, ignore_index=True, axis=0)
