@@ -156,6 +156,46 @@ class WrapperMercadoPrecios(object):
         return self.market_price
 
 
+    def mercados_precios_scraper(self):
+        """
+        Method that contains the program logic to scrape the *Mercado y precios*
+        
+        Parameters:
+        -----------
+        self.date: str.
+            The date to scrape in the format YYYY-MM-DD.
+        self.max_hour: int.
+            The maximum hour (+1) to iterate over.
+        self.mercado_precio_nav: NavigationMercadoPrecios object.
+            The object that contains the methods to navigate the *Mercado y
+            precios* webpage.
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+        
+        Returns:
+        --------
+        File with the data for *Mercados y precios* for each day.
+        """
+
+        # Get the year, month and day. Pass it to the date navigator
+        year = self.date.split("-")[0]
+        month = self.date.split("-")[1]
+        day = self.date.split("-")[2]
+
+        self.mercado_precio_nav.date_navigator(
+            year=year, month=month, day=day
+        )
+        time.sleep(5)
+        print(self.driver.current_url)  # For debugging the correct URL
+
+        market_price = self.hour_iterator_mercado_precios()
+
+        # Save the data of *Mercados y precios* to a CSV file for each day
+        data_saver = FileUtils(filename=f'energy_prices_{self.date}.csv', dictionary=market_price)
+        data_saver.save_data()
+        
+
+
 class WrapperGeneracionConsumo(object):
     """
     Contains methods with the program logic and other utilities to scrape the
@@ -179,6 +219,7 @@ class WrapperGeneracionConsumo(object):
             "nuclear generation (MW)": [],
             "thermorenewable generation (MW)": [],
         }
+
 
     def hour_iterator_generacion_libre_co2(self) -> pd.DataFrame():
         """
@@ -270,6 +311,54 @@ class WrapperGeneracionConsumo(object):
         renewable_data_df = pd.DataFrame(self.renewable_data)
         return renewable_data_df
 
+
+    def generacion_consumo_scraper(self):
+        """
+        Method that contains the program logic to scrape the *Generación y consumo*
+        
+        Parameters:
+        -----------
+        self.date: str.
+            The date to scrape in the format YYYY-MM-DD.
+        self.max_hour: int.
+            The maximum hour (+1) to iterate over.
+        self.generacion_consumo_nav: NavigationGeneracionConsumo object.
+            The object that contains the methods to navigate the *Generación y
+            consumo* webpage.
+        self.driver: WebDriver object.
+            The webdriver that will be used to scrape the webpage.
+        
+        Returns:
+        --------
+        File with the data for *Generacións y consumo* for each day.
+        """
+
+        # Get the year, month and day. Pass it to the date navigator
+        year = self.date.split("-")[0]
+        month = self.date.split("-")[1]
+        day = self.date.split("-")[2]
+
+        # Get the files in the directory that contain information
+        # from *Mercados y precios*, check if date is in the file
+        # name and load as pandas dataframe
+        file = [file for file in os.listdir("data") if "renewable_generation" not in file and self.date in file]
+        energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
+
+        # Initiate method to get the data from the *Generación y consumo*
+        # page and start the scraping process
+        self.generacion_consumo_nav.date_navigator(year=year, month=month, day=day)
+        time.sleep(5)
+        print(self.driver.current_url)  # For debugging the correct URL
+
+        renewable_data_df = (
+            self.hour_iterator_generacion_libre_co2()
+        )
+
+        # Merge both dataframes and save the data to a CSV file for each day
+        energy_prices = pd.merge(energy_prices, renewable_data_df, on=["date", "hour"])
+        energy_prices.to_csv(f"data/energy_prices_renewable_generation_{self.date}.csv",index=False)        
+        
+        
 
 class FileUtils(object):
     def __init__(self, filename, dictionary) -> None:
