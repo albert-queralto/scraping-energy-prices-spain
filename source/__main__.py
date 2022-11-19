@@ -56,7 +56,8 @@ class ElectricityScraper:
 
     def __init__(self, start_date, end_date):
         """
-        Method that includes all the elements that are required during initialization.
+        Method that includes all the elements that are required during 
+        initialization.
         """
 
         # WebDriver options
@@ -69,7 +70,8 @@ class ElectricityScraper:
         )  # Prevent being identified as a bot with custom User-Agents
         options.add_argument("content-type=application/x-www-form-urlencoded")
 
-        # Initiate the webdriver, installs it if not present and implements the previous options
+        # Initiate the webdriver, installs it if not present and implements the
+        # previous options
         self.driver = Chrome(
             service=ChromeService(ChromeDriverManager().install()),
             options=options,
@@ -92,7 +94,9 @@ class ElectricityScraper:
             self.dates_list_init.append(self.start_date.strftime("%Y-%m-%d"))
             self.start_date += self.delta
             
-        self.dates_list = self.dates_list_init # The date_list variable will be overwritten depending on the presence of missing files
+        # The date_list variable will be overwritten depending on the presence 
+        # of missing files
+        self.dates_list = self.dates_list_init
 
 
     def mercado_precios_scraper(self):
@@ -100,7 +104,8 @@ class ElectricityScraper:
         Method that implements the scraper for the *Mercado y precios* page.
         """
 
-        # Initiate the navigation elements for the first page and open the Chrome session
+        # Initiate the navigation elements for the first page and open the 
+        # Chrome session
         page_navigator = NavigationMain(
             driver=self.driver, base_url=self.base_url
         )
@@ -111,11 +116,13 @@ class ElectricityScraper:
         page_navigator.navigate_mercados_precios()
         time.sleep(1)
 
-        # Initiate the method to perform the hour selection in the *Mercados y precios* page
+        # Initiate the method to perform the hour selection in the *Mercados y precios* 
+        # page
         mercado_precio_navigator =  NavigationMercadosPrecios(driver=self.driver)
         
         # Find missing files by looking in the directory.
-        # If there are missing files, the date list is replaced with the list of missing dates
+        # If there are missing files, the date list is replaced with the list of
+        # missing dates
         files = os.listdir("data")        
 
         if files:
@@ -159,7 +166,8 @@ class ElectricityScraper:
             data_saver = FileUtils(filename=f'energy_prices_{date}.csv', dictionary=market_price)
             data_saver.save_data()
             
-        # Check if there are missing files in the data folder after scraping of *Mercados y precios* is completed
+        # Check if there are missing files in the data folder after scraping of
+        # *Mercados y precios* is completed
         data_saver.missing_mercados_precios(date_list=self.dates_list_init)
             
         # If data_saver.missing_files_mercados_precios is not an empty list
@@ -224,9 +232,9 @@ class ElectricityScraper:
         # Find missing files by looking in the directory
         files = os.listdir("data")
         if files:
-            # Initialize data_saver with empty values since we will not use them at this point
-            # The data_saver will be initialized again later to save data. Here we only want
-            # to find if there are missing files
+            # Initialize data_saver with empty values since we will not use 
+            # them at this point. The data_saver will be initialized again later
+            # to save data. Here we only want to find if there are missing files
             data_saver = FileUtils(filename='', dictionary={}) 
             data_saver.missing_generacion_consumo(date_list=self.dates_list_init)
         if len(data_saver.missing_files_generacion_consumo) > 0:
@@ -245,14 +253,16 @@ class ElectricityScraper:
             day = date.split("-")[2]
 
             try:
-                # Check if date is in the file name and load the file of *Mercados y precios* as pandas dataframe
+                # Check if date is in the file name and load the file of 
+                # *Mercados y precios* as pandas dataframe
                 file = [file for file in files if date in file]
                 energy_prices = pd.read_csv(f"data/{file[0]}", sep=";")
             except Exception as e:
                 print(f"{e}")
                 continue
 
-            # Initiate method to get the data from the *Generación y consumo* page and start the scraping process
+            # Initiate method to get the data from the *Generación y consumo*
+            # page and start the scraping process
             generacion_consumo_navigator.date_navigator(year=year, month=month, day=day)
 
             time.sleep(5)
@@ -269,7 +279,8 @@ class ElectricityScraper:
             )
 
             try:
-                # Merge both dataframes and save the data to a CSV file for each day
+                # Merge both dataframes and save the data to a CSV file for each
+                # day
                 energy_prices = pd.merge(energy_prices, renewable_data_df, on=["date", "hour"])
                 energy_prices.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
                 
@@ -279,7 +290,8 @@ class ElectricityScraper:
                 renewable_data_df.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
                 continue
             
-            # Check if there are missing files in the data folder after scraping of *Mercados y precios* is completed
+            # Check if there are missing files in the data folder after scraping
+            # of *Mercados y precios* is completed
             data_saver.missing_generacion_consumo(date_list=self.dates_list_init)
             
             # If data_saver.missing_files_generacion_consumo is not empty list
@@ -322,7 +334,8 @@ class ElectricityScraper:
                         renewable_data_df.to_csv(f"data/energy_prices_renewable_generation_{date}.csv",index=False)
                         continue
         
-        # Merge all the files in the data folder, create the categorical column and save the data to a CSV file
+        # Merge all the files in the data folder, create the categorical column
+        # and save the data to a CSV file
         data_saver.file_merger()
         data_saver.create_categorical_column()
 
