@@ -255,8 +255,7 @@ class ElectricityScraper:
 if __name__ == "__main__":
     # Set the period of time to scrape
     start_date = "2020-11-01"
-    # end_date = "2022-10-31"
-    end_date = "2020-11-02"
+    end_date = "2022-10-31"
     
     try:
         electricity_scraper = ElectricityScraper(start_date=start_date, end_date=end_date)
