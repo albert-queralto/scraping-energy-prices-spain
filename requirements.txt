@@ -225,7 +225,7 @@ rope @ file:///opt/conda/conda-bld/rope_1643788605236/work
 Rtree @ file:///tmp/build/80754af9/rtree_1618420843093/work
 ruamel-yaml-conda @ file:///tmp/build/80754af9/ruamel_yaml_1616016711199/work
 s3transfer @ file:///opt/conda/conda-bld/s3transfer_1654524197066/work
-scipy==1.9.1
+scipy==1.10.0
 Scrapy @ file:///tmp/abs_e3bmwi01y8/croots/recipe/scrapy_1659598696235/work
 SecretStorage @ file:///tmp/build/80754af9/secretstorage_1614022780358/work
 Send2Trash @ file:///tmp/build/80754af9/send2trash_1632406701022/work
